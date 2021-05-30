@@ -184,6 +184,8 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Row.cs" />
+    <Compile Include="Table.cs" />
     <Compile Include="UserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -191,6 +193,7 @@
       <DependentUpon>UserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Column.cs" />
+    <Compile Include="WorksheetExtensions.cs" />
     <Compile Include="WorksheetItem.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

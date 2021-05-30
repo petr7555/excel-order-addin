@@ -89,7 +89,7 @@ namespace ExcelOrderAddIn
             // idCol2ComboBox
             // 
             this.idCol2ComboBox.FormattingEnabled = true;
-            this.idCol2ComboBox.Location = new System.Drawing.Point(275, 77);
+            this.idCol2ComboBox.Location = new System.Drawing.Point(275, 74);
             this.idCol2ComboBox.Name = "idCol2ComboBox";
             this.idCol2ComboBox.Size = new System.Drawing.Size(121, 21);
             this.idCol2ComboBox.TabIndex = 7;
@@ -98,7 +98,7 @@ namespace ExcelOrderAddIn
             // idCol2Label
             // 
             this.idCol2Label.AutoSize = true;
-            this.idCol2Label.Location = new System.Drawing.Point(216, 80);
+            this.idCol2Label.Location = new System.Drawing.Point(216, 77);
             this.idCol2Label.Name = "idCol2Label";
             this.idCol2Label.Size = new System.Drawing.Size(55, 13);
             this.idCol2Label.TabIndex = 6;
@@ -107,7 +107,7 @@ namespace ExcelOrderAddIn
             // table2Label
             // 
             this.table2Label.AutoSize = true;
-            this.table2Label.Location = new System.Drawing.Point(11, 80);
+            this.table2Label.Location = new System.Drawing.Point(11, 77);
             this.table2Label.Name = "table2Label";
             this.table2Label.Size = new System.Drawing.Size(43, 13);
             this.table2Label.TabIndex = 5;
@@ -118,7 +118,7 @@ namespace ExcelOrderAddIn
             this.table2ComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.table2ComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.table2ComboBox.FormattingEnabled = true;
-            this.table2ComboBox.Location = new System.Drawing.Point(60, 77);
+            this.table2ComboBox.Location = new System.Drawing.Point(60, 74);
             this.table2ComboBox.Name = "table2ComboBox";
             this.table2ComboBox.Size = new System.Drawing.Size(121, 21);
             this.table2ComboBox.TabIndex = 4;
@@ -130,7 +130,7 @@ namespace ExcelOrderAddIn
             this.idCol3ComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.idCol3ComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.idCol3ComboBox.FormattingEnabled = true;
-            this.idCol3ComboBox.Location = new System.Drawing.Point(275, 104);
+            this.idCol3ComboBox.Location = new System.Drawing.Point(275, 101);
             this.idCol3ComboBox.Name = "idCol3ComboBox";
             this.idCol3ComboBox.Size = new System.Drawing.Size(121, 21);
             this.idCol3ComboBox.TabIndex = 11;
@@ -139,7 +139,7 @@ namespace ExcelOrderAddIn
             // idCol3Label
             // 
             this.idCol3Label.AutoSize = true;
-            this.idCol3Label.Location = new System.Drawing.Point(216, 107);
+            this.idCol3Label.Location = new System.Drawing.Point(216, 104);
             this.idCol3Label.Name = "idCol3Label";
             this.idCol3Label.Size = new System.Drawing.Size(55, 13);
             this.idCol3Label.TabIndex = 10;
@@ -148,7 +148,7 @@ namespace ExcelOrderAddIn
             // table3Label
             // 
             this.table3Label.AutoSize = true;
-            this.table3Label.Location = new System.Drawing.Point(11, 107);
+            this.table3Label.Location = new System.Drawing.Point(11, 104);
             this.table3Label.Name = "table3Label";
             this.table3Label.Size = new System.Drawing.Size(43, 13);
             this.table3Label.TabIndex = 9;
@@ -159,7 +159,7 @@ namespace ExcelOrderAddIn
             this.table3ComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.table3ComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.table3ComboBox.FormattingEnabled = true;
-            this.table3ComboBox.Location = new System.Drawing.Point(60, 104);
+            this.table3ComboBox.Location = new System.Drawing.Point(60, 101);
             this.table3ComboBox.Name = "table3ComboBox";
             this.table3ComboBox.Size = new System.Drawing.Size(121, 21);
             this.table3ComboBox.TabIndex = 8;
@@ -168,7 +168,7 @@ namespace ExcelOrderAddIn
             // 
             // createBtn
             // 
-            this.createBtn.Location = new System.Drawing.Point(304, 131);
+            this.createBtn.Location = new System.Drawing.Point(321, 128);
             this.createBtn.Name = "createBtn";
             this.createBtn.Size = new System.Drawing.Size(75, 23);
             this.createBtn.TabIndex = 12;
@@ -184,6 +184,7 @@ namespace ExcelOrderAddIn
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.Controls.Add(this.createBtn);
             this.Controls.Add(this.idCol3ComboBox);
             this.Controls.Add(this.idCol3Label);
@@ -199,6 +200,7 @@ namespace ExcelOrderAddIn
             this.Controls.Add(this.table1ComboBox);
             this.Name = "UserControl";
             this.Size = new System.Drawing.Size(436, 509);
+            this.Enter += new System.EventHandler(this.UserControl_Enter);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -20,15 +20,5 @@ namespace ExcelOrderAddIn
         {
             return Worksheet.Name;
         }
-
-        public IEnumerable<string> GetColumns()
-        {
-            var i = 1;
-            string column;
-            while ((column = Worksheet.Cells[1, i++].Value2) != null)
-            {
-                yield return column;
-            }
-        }
     }
 }

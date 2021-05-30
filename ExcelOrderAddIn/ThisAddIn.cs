@@ -17,12 +17,12 @@ namespace ExcelOrderAddIn
         private void ThisAddIn_Startup(object sender, EventArgs e)
         {
             Application.WorkbookBeforeSave += new Excel.AppEvents_WorkbookBeforeSaveEventHandler(Application_WorkbookBeforeSave);
+
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
             Application.WorkbookBeforeSave -= new Excel.AppEvents_WorkbookBeforeSaveEventHandler(Application_WorkbookBeforeSave);
-
         }
 
         #region VSTO generated code
