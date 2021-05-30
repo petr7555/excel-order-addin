@@ -29,6 +29,7 @@ namespace ExcelOrderAddIn
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.table1ComboBox = new System.Windows.Forms.ComboBox();
             this.table1Label = new System.Windows.Forms.Label();
             this.idCol1Label = new System.Windows.Forms.Label();
@@ -41,6 +42,9 @@ namespace ExcelOrderAddIn
             this.idCol3Label = new System.Windows.Forms.Label();
             this.table3Label = new System.Windows.Forms.Label();
             this.table3ComboBox = new System.Windows.Forms.ComboBox();
+            this.createBtn = new System.Windows.Forms.Button();
+            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // table1ComboBox
@@ -53,6 +57,7 @@ namespace ExcelOrderAddIn
             this.table1ComboBox.Size = new System.Drawing.Size(121, 21);
             this.table1ComboBox.TabIndex = 0;
             this.table1ComboBox.SelectedIndexChanged += new System.EventHandler(this.table1ComboBox_SelectedIndexChanged);
+            this.table1ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.table1ComboBox_Validating);
             // 
             // table1Label
             // 
@@ -66,7 +71,7 @@ namespace ExcelOrderAddIn
             // idCol1Label
             // 
             this.idCol1Label.AutoSize = true;
-            this.idCol1Label.Location = new System.Drawing.Point(199, 50);
+            this.idCol1Label.Location = new System.Drawing.Point(216, 50);
             this.idCol1Label.Name = "idCol1Label";
             this.idCol1Label.Size = new System.Drawing.Size(55, 13);
             this.idCol1Label.TabIndex = 2;
@@ -75,23 +80,25 @@ namespace ExcelOrderAddIn
             // idCol1ComboBox
             // 
             this.idCol1ComboBox.FormattingEnabled = true;
-            this.idCol1ComboBox.Location = new System.Drawing.Point(258, 47);
+            this.idCol1ComboBox.Location = new System.Drawing.Point(275, 47);
             this.idCol1ComboBox.Name = "idCol1ComboBox";
             this.idCol1ComboBox.Size = new System.Drawing.Size(121, 21);
             this.idCol1ComboBox.TabIndex = 3;
+            this.idCol1ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.idCol1ComboBox_Validating);
             // 
             // idCol2ComboBox
             // 
             this.idCol2ComboBox.FormattingEnabled = true;
-            this.idCol2ComboBox.Location = new System.Drawing.Point(258, 77);
+            this.idCol2ComboBox.Location = new System.Drawing.Point(275, 77);
             this.idCol2ComboBox.Name = "idCol2ComboBox";
             this.idCol2ComboBox.Size = new System.Drawing.Size(121, 21);
             this.idCol2ComboBox.TabIndex = 7;
+            this.idCol2ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.idCol2ComboBox_Validating);
             // 
             // idCol2Label
             // 
             this.idCol2Label.AutoSize = true;
-            this.idCol2Label.Location = new System.Drawing.Point(199, 80);
+            this.idCol2Label.Location = new System.Drawing.Point(216, 80);
             this.idCol2Label.Name = "idCol2Label";
             this.idCol2Label.Size = new System.Drawing.Size(55, 13);
             this.idCol2Label.TabIndex = 6;
@@ -116,21 +123,23 @@ namespace ExcelOrderAddIn
             this.table2ComboBox.Size = new System.Drawing.Size(121, 21);
             this.table2ComboBox.TabIndex = 4;
             this.table2ComboBox.SelectedIndexChanged += new System.EventHandler(this.table2ComboBox_SelectedIndexChanged);
+            this.table2ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.table2ComboBox_Validating);
             // 
             // idCol3ComboBox
             // 
             this.idCol3ComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.idCol3ComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.idCol3ComboBox.FormattingEnabled = true;
-            this.idCol3ComboBox.Location = new System.Drawing.Point(258, 104);
+            this.idCol3ComboBox.Location = new System.Drawing.Point(275, 104);
             this.idCol3ComboBox.Name = "idCol3ComboBox";
             this.idCol3ComboBox.Size = new System.Drawing.Size(121, 21);
             this.idCol3ComboBox.TabIndex = 11;
+            this.idCol3ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.idCol3ComboBox_Validating);
             // 
             // idCol3Label
             // 
             this.idCol3Label.AutoSize = true;
-            this.idCol3Label.Location = new System.Drawing.Point(199, 107);
+            this.idCol3Label.Location = new System.Drawing.Point(216, 107);
             this.idCol3Label.Name = "idCol3Label";
             this.idCol3Label.Size = new System.Drawing.Size(55, 13);
             this.idCol3Label.TabIndex = 10;
@@ -155,11 +164,27 @@ namespace ExcelOrderAddIn
             this.table3ComboBox.Size = new System.Drawing.Size(121, 21);
             this.table3ComboBox.TabIndex = 8;
             this.table3ComboBox.SelectedIndexChanged += new System.EventHandler(this.table3ComboBox_SelectedIndexChanged);
+            this.table3ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.table3ComboBox_Validating);
+            // 
+            // createBtn
+            // 
+            this.createBtn.Location = new System.Drawing.Point(304, 131);
+            this.createBtn.Name = "createBtn";
+            this.createBtn.Size = new System.Drawing.Size(75, 23);
+            this.createBtn.TabIndex = 12;
+            this.createBtn.Text = "&Create";
+            this.createBtn.UseVisualStyleBackColor = true;
+            this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
+            // 
+            // errorProvider
+            // 
+            this.errorProvider.ContainerControl = this;
             // 
             // UserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.createBtn);
             this.Controls.Add(this.idCol3ComboBox);
             this.Controls.Add(this.idCol3Label);
             this.Controls.Add(this.table3Label);
@@ -173,7 +198,8 @@ namespace ExcelOrderAddIn
             this.Controls.Add(this.table1Label);
             this.Controls.Add(this.table1ComboBox);
             this.Name = "UserControl";
-            this.Size = new System.Drawing.Size(428, 598);
+            this.Size = new System.Drawing.Size(436, 509);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -193,5 +219,7 @@ namespace ExcelOrderAddIn
         private System.Windows.Forms.Label idCol3Label;
         private System.Windows.Forms.Label table3Label;
         private System.Windows.Forms.ComboBox table3ComboBox;
+        private System.Windows.Forms.Button createBtn;
+        private System.Windows.Forms.ErrorProvider errorProvider;
     }
 }

@@ -61,8 +61,10 @@ namespace ExcelOrderAddIn
             // 
             // openSidebarBtn
             // 
+            this.openSidebarBtn.Image = global::ExcelOrderAddIn.Properties.Resources.open_outline;
             this.openSidebarBtn.Label = "Open sidebar";
             this.openSidebarBtn.Name = "openSidebarBtn";
+            this.openSidebarBtn.ShowImage = true;
             this.openSidebarBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.openSidebarBtn_Click);
             // 
             // infoGroup

@@ -10,7 +10,7 @@ namespace ExcelOrderAddIn
         {
             UserControl userControl = new UserControl();
             var taskPane = Globals.ThisAddIn.CustomTaskPanes.Add(userControl, "Order Add-In");
-            taskPane.Width = 420;
+            taskPane.Width = 450;
             taskPane.Visible = true;
         }
     }
