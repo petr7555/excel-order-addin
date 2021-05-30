@@ -7,11 +7,11 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn
 {
-    class WorksheetItem
+    class Column
     {
         public Excel.Worksheet Worksheet { get; set; }
 
-        public WorksheetItem(Excel.Worksheet worksheet)
+        public Column(Excel.Worksheet worksheet)
         {
             Worksheet = worksheet;
         }
@@ -19,16 +19,6 @@ namespace ExcelOrderAddIn
         public override string ToString()
         {
             return Worksheet.Name;
-        }
-
-        public IEnumerable<string> GetColumns()
-        {
-            var i = 1;
-            string column;
-            while ((column = Worksheet.Cells[1, i++].Value2) != null)
-            {
-                yield return column;
-            }
         }
     }
 }

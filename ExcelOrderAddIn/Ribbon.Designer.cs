@@ -36,14 +36,14 @@ namespace ExcelOrderAddIn
         private void InitializeComponent()
         {
             this.tab1 = this.Factory.CreateRibbonTab();
+            this.group1 = this.Factory.CreateRibbonGroup();
+            this.openSidebarBtn = this.Factory.CreateRibbonButton();
             this.infoGroup = this.Factory.CreateRibbonGroup();
             this.label1 = this.Factory.CreateRibbonLabel();
             this.label2 = this.Factory.CreateRibbonLabel();
-            this.openSidebarBtn = this.Factory.CreateRibbonButton();
-            this.group1 = this.Factory.CreateRibbonGroup();
             this.tab1.SuspendLayout();
-            this.infoGroup.SuspendLayout();
             this.group1.SuspendLayout();
+            this.infoGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab1
@@ -52,6 +52,18 @@ namespace ExcelOrderAddIn
             this.tab1.Groups.Add(this.infoGroup);
             this.tab1.Label = "Order Add-In";
             this.tab1.Name = "tab1";
+            // 
+            // group1
+            // 
+            this.group1.Items.Add(this.openSidebarBtn);
+            this.group1.Label = "Controls";
+            this.group1.Name = "group1";
+            // 
+            // openSidebarBtn
+            // 
+            this.openSidebarBtn.Label = "Open sidebar";
+            this.openSidebarBtn.Name = "openSidebarBtn";
+            this.openSidebarBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.openSidebarBtn_Click);
             // 
             // infoGroup
             // 
@@ -70,29 +82,17 @@ namespace ExcelOrderAddIn
             this.label2.Label = "Created by Petr Janík";
             this.label2.Name = "label2";
             // 
-            // openSidebarBtn
+            // Ribbon
             // 
-            this.openSidebarBtn.Label = "Open sidebar";
-            this.openSidebarBtn.Name = "openSidebarBtn";
-            this.openSidebarBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.openSidebarBtn_Click);
-            // 
-            // group1
-            // 
-            this.group1.Items.Add(this.openSidebarBtn);
-            this.group1.Label = "Controls";
-            this.group1.Name = "group1";
-            // 
-            // Ribbon1
-            // 
-            this.Name = "Ribbon1";
+            this.Name = "Ribbon";
             this.RibbonType = "Microsoft.Excel.Workbook";
             this.Tabs.Add(this.tab1);
             this.tab1.ResumeLayout(false);
             this.tab1.PerformLayout();
-            this.infoGroup.ResumeLayout(false);
-            this.infoGroup.PerformLayout();
             this.group1.ResumeLayout(false);
             this.group1.PerformLayout();
+            this.infoGroup.ResumeLayout(false);
+            this.infoGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
