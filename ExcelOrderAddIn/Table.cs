@@ -11,33 +11,41 @@ namespace ExcelOrderAddIn
 {
     class Table
     {
-        private object[,] Header = new object[0, 0];
-        private object[,] Data = new object[0, 0];
-        private IList<string> ColumnNames;
+        private IList<string> Columns;
+        public object[][] Data = new object[0][];
         private string IdCol;
 
-        private int NCols { get => Header.GetLength(1); }
-        private int NRows { get => Data.GetLength(0); }
+        private int NCols { get => Columns.Count; }
+        private int NRows { get => Data.Count(); }
 
+        private int IdColIdx { get => Columns.IndexOf(IdCol); }
 
         private Table()
         {          
         }
 
-        public Table Join(Table other)
+        public Table(IList<string> columns, object[][] data, string idCol)
         {
+            Columns = columns;
+            Data = data;
+            IdCol = idCol;
+        }
 
-            //return new Table(Rows.Join(other.Rows,
-            //       r1 => r1.ColumnsAndValues[leftId],
-            //       r2 => r2.ColumnsAndValues[rightId],
-            //       (r1, r2) => {
-            //           return new Row(r1.ColumnsAndValues.ToList().Select(kv => kv.Key).Concat(r2.ColumnsAndValues.ToList().Select(kv => kv.Key)).ToList(),
-            //                                r1.ColumnsAndValues.ToList().Select(kv => kv.Value).Concat(r2.ColumnsAndValues.ToList().Select(kv => kv.Value)).ToList());
-            //           }
-            //   ).ToList()
-            //);
+        public Table Join(Table rightTable)
+        {
+            var leftIdColIdx = IdColIdx;
+            var rightIdColIdx = rightTable.IdColIdx;
 
-            throw new NotImplementedException();
+            // TODO zjistit index  sloupců, které vypadly, ty vyházet 
+            var newData = Data.Join(rightTable.Data,
+                leftRow => leftRow.ElementAt(leftIdColIdx),
+                rightRow => rightRow.ElementAt(rightIdColIdx),
+                (leftRow, rightRow) => leftRow.Concat(rightRow))
+                .Select(row => row.ToArray()).ToArray();
+
+            var newCols = Columns.Union(rightTable.Columns).ToList();
+
+            return new Table(newCols, newData, IdCol);
         }
 
         internal void PrintToWorksheet(Excel.Worksheet worksheet)
@@ -50,8 +58,7 @@ namespace ExcelOrderAddIn
             // header
             var headerStartCell = worksheet.Cells[1, 1] as Excel.Range;
             var headerEndCell = worksheet.Cells[1, NCols] as Excel.Range;
-
-            worksheet.Range[headerStartCell, headerEndCell].Value2 = Header;
+            worksheet.Range[headerStartCell, headerEndCell].Value2 = Columns.ToExcelMultidimArray();
 
             if (NRows == 0)
             {
@@ -61,8 +68,7 @@ namespace ExcelOrderAddIn
             // skip header
             var dataStartCell = worksheet.Cells[2, 1] as Excel.Range;
             var dataEndCell = worksheet.Cells[NRows + 1, NCols] as Excel.Range;
-            worksheet.Range[dataStartCell, dataEndCell].Value2 = Data;
-
+            worksheet.Range[dataStartCell, dataEndCell].Value2 = Data.ToExcelMultidimArray();
         }
 
         internal static Table FromComboBoxes(ComboBox tableComboBox, ComboBox idColComboBox)
@@ -73,23 +79,13 @@ namespace ExcelOrderAddIn
             var table = new Table
             {
                 IdCol = idCol,
-                ColumnNames = worksheet.GetColumnNames()
+                Columns = worksheet.GetColumnNames()
             };
 
             var nCols = worksheet.NCols();
             var nRows = worksheet.NRows();
 
-            if (nCols == 0)
-            {
-                return table;
-            }
-
-            // header
-            var headerStartCell = worksheet.Cells[1, 1] as Excel.Range;
-            var headerEndCell = worksheet.Cells[1, nCols] as Excel.Range;
-            table.Header = worksheet.Range[headerStartCell, headerEndCell].Value2;
-
-            if (nRows == 0)
+            if (table.NCols == 0 || nRows == 0)
             {
                 return table;
             }
@@ -97,7 +93,7 @@ namespace ExcelOrderAddIn
             // skip header
             var dataStartCell = worksheet.Cells[2, 1] as Excel.Range;
             var dataEndCell = worksheet.Cells[nRows + 1, nCols] as Excel.Range;
-            table.Data = worksheet.Range[dataStartCell, dataEndCell].Value2;
+            table.Data = (worksheet.Range[dataStartCell, dataEndCell].Value2 as object[,]).FromExcelMultidimArray();
 
             return table;
         }

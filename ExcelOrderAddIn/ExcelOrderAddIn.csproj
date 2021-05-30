@@ -181,6 +181,7 @@
   -->
   <ItemGroup>
     <Compile Include="AddIns\ThisAddIn.cs" />
+    <Compile Include="ArrayExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

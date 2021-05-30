@@ -17,7 +17,6 @@ namespace ExcelOrderAddIn
 
             RefreshItems();
             Globals.ThisAddIn.Application.SheetChange += Application_SheetChange;
-
         }
 
         private void Application_SheetChange(object Sh, Excel.Range Target)
@@ -99,9 +98,9 @@ namespace ExcelOrderAddIn
 
                 var newWorksheet = CreateNewWorksheet();
 
-                //var joined = table1.Join(table2).Join(table3);
+                var joined = table1.Join(table2).Join(table3);
 
-                table1.PrintToWorksheet(newWorksheet);
+                joined.PrintToWorksheet(newWorksheet);
                 
 
                 MessageBox.Show("Done");
