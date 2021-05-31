@@ -186,6 +186,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Row.cs" />
+    <Compile Include="Styling.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="UserControl.cs">
       <SubType>UserControl</SubType>
@@ -212,6 +213,7 @@
     <EmbeddedResource Include="UserControl.resx">
       <DependentUpon>UserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="ExcelOrderAddIn_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -220,6 +222,7 @@
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Ribbon.cs">
       <SubType>Component</SubType>

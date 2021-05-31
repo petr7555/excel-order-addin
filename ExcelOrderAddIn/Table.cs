@@ -65,6 +65,13 @@ namespace ExcelOrderAddIn
 
         internal void PrintToWorksheet(Excel.Worksheet worksheet)
         {
+            PrintRawDataToWorksheet(worksheet);
+
+            FormatData(worksheet);
+        }
+
+        internal void PrintRawDataToWorksheet(Excel.Worksheet worksheet)
+        {
             if (NCols == 0)
             {
                 return;
@@ -73,7 +80,10 @@ namespace ExcelOrderAddIn
             // header
             var headerStartCell = worksheet.Cells[1, 1] as Excel.Range;
             var headerEndCell = worksheet.Cells[1, NCols] as Excel.Range;
-            worksheet.Range[headerStartCell, headerEndCell].Value2 = Columns.ToExcelMultidimArray();
+            var headerRange = worksheet.Range[headerStartCell, headerEndCell];
+            headerRange.Value2 = Columns.ToExcelMultidimArray();
+            Styling.Apply(headerRange, Styling.Style.HEADER);
+
 
             if (NRows == 0)
             {
@@ -84,6 +94,15 @@ namespace ExcelOrderAddIn
             var dataStartCell = worksheet.Cells[2, 1] as Excel.Range;
             var dataEndCell = worksheet.Cells[NRows + 1, NCols] as Excel.Range;
             worksheet.Range[dataStartCell, dataEndCell].Value2 = Data.ToExcelMultidimArray();
+        }
+
+        internal void FormatData(Excel.Worksheet worksheet)
+        {
+            var usedRange = worksheet.UsedRange;
+            //worksheet.Sty
+            //Globals.ThisAddIn.Application.Workbook. workbook.Styles
+            usedRange.Columns.AutoFit();
+            Styling.Apply(worksheet.Range["A1"], Styling.Style.CALCULATION);
         }
 
         internal static Table FromComboBoxes(ComboBox tableComboBox, ComboBox idColComboBox)

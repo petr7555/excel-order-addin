@@ -44,7 +44,11 @@ namespace ExcelOrderAddIn
             this.table3ComboBox = new System.Windows.Forms.ComboBox();
             this.createBtn = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.deleteGeneratedSheetsBtn = new System.Windows.Forms.Button();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // table1ComboBox
@@ -56,6 +60,7 @@ namespace ExcelOrderAddIn
             this.table1ComboBox.Name = "table1ComboBox";
             this.table1ComboBox.Size = new System.Drawing.Size(121, 21);
             this.table1ComboBox.TabIndex = 0;
+            this.toolTip.SetToolTip(this.table1ComboBox, "Select first table.");
             this.table1ComboBox.SelectedIndexChanged += new System.EventHandler(this.table1ComboBox_SelectedIndexChanged);
             this.table1ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.table1ComboBox_Validating);
             // 
@@ -84,6 +89,8 @@ namespace ExcelOrderAddIn
             this.idCol1ComboBox.Name = "idCol1ComboBox";
             this.idCol1ComboBox.Size = new System.Drawing.Size(121, 21);
             this.idCol1ComboBox.TabIndex = 3;
+            this.toolTip.SetToolTip(this.idCol1ComboBox, "Common column to join on.");
+            this.idCol1ComboBox.SelectedIndexChanged += new System.EventHandler(this.idCol1ComboBox_SelectedIndexChanged);
             this.idCol1ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.idCol1ComboBox_Validating);
             // 
             // idCol2ComboBox
@@ -93,6 +100,8 @@ namespace ExcelOrderAddIn
             this.idCol2ComboBox.Name = "idCol2ComboBox";
             this.idCol2ComboBox.Size = new System.Drawing.Size(121, 21);
             this.idCol2ComboBox.TabIndex = 7;
+            this.toolTip.SetToolTip(this.idCol2ComboBox, "Common column to join on.");
+            this.idCol2ComboBox.SelectedIndexChanged += new System.EventHandler(this.idCol2ComboBox_SelectedIndexChanged);
             this.idCol2ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.idCol2ComboBox_Validating);
             // 
             // idCol2Label
@@ -122,6 +131,7 @@ namespace ExcelOrderAddIn
             this.table2ComboBox.Name = "table2ComboBox";
             this.table2ComboBox.Size = new System.Drawing.Size(121, 21);
             this.table2ComboBox.TabIndex = 4;
+            this.toolTip.SetToolTip(this.table2ComboBox, "Select second table.");
             this.table2ComboBox.SelectedIndexChanged += new System.EventHandler(this.table2ComboBox_SelectedIndexChanged);
             this.table2ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.table2ComboBox_Validating);
             // 
@@ -134,6 +144,8 @@ namespace ExcelOrderAddIn
             this.idCol3ComboBox.Name = "idCol3ComboBox";
             this.idCol3ComboBox.Size = new System.Drawing.Size(121, 21);
             this.idCol3ComboBox.TabIndex = 11;
+            this.toolTip.SetToolTip(this.idCol3ComboBox, "Common column to join on.");
+            this.idCol3ComboBox.SelectedIndexChanged += new System.EventHandler(this.idCol3ComboBox_SelectedIndexChanged);
             this.idCol3ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.idCol3ComboBox_Validating);
             // 
             // idCol3Label
@@ -163,6 +175,7 @@ namespace ExcelOrderAddIn
             this.table3ComboBox.Name = "table3ComboBox";
             this.table3ComboBox.Size = new System.Drawing.Size(121, 21);
             this.table3ComboBox.TabIndex = 8;
+            this.toolTip.SetToolTip(this.table3ComboBox, "Select third table.");
             this.table3ComboBox.SelectedIndexChanged += new System.EventHandler(this.table3ComboBox_SelectedIndexChanged);
             this.table3ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.table3ComboBox_Validating);
             // 
@@ -173,6 +186,7 @@ namespace ExcelOrderAddIn
             this.createBtn.Size = new System.Drawing.Size(75, 23);
             this.createBtn.TabIndex = 12;
             this.createBtn.Text = "&Create";
+            this.toolTip.SetToolTip(this.createBtn, "Creates  \'New Order\' sheet.");
             this.createBtn.UseVisualStyleBackColor = true;
             this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
             // 
@@ -180,11 +194,33 @@ namespace ExcelOrderAddIn
             // 
             this.errorProvider.ContainerControl = this;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.deleteGeneratedSheetsBtn);
+            this.groupBox1.Location = new System.Drawing.Point(196, 177);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(200, 100);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Danger zone";
+            // 
+            // deleteGeneratedSheetsBtn
+            // 
+            this.deleteGeneratedSheetsBtn.Location = new System.Drawing.Point(6, 19);
+            this.deleteGeneratedSheetsBtn.Name = "deleteGeneratedSheetsBtn";
+            this.deleteGeneratedSheetsBtn.Size = new System.Drawing.Size(188, 23);
+            this.deleteGeneratedSheetsBtn.TabIndex = 0;
+            this.deleteGeneratedSheetsBtn.Text = "Delete generated sheets";
+            this.toolTip.SetToolTip(this.deleteGeneratedSheetsBtn, "Deletes all sheets starting with \'New Order\'.");
+            this.deleteGeneratedSheetsBtn.UseVisualStyleBackColor = true;
+            this.deleteGeneratedSheetsBtn.Click += new System.EventHandler(this.deleteGeneratedSheetsBtn_Click);
+            // 
             // UserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.createBtn);
             this.Controls.Add(this.idCol3ComboBox);
             this.Controls.Add(this.idCol3Label);
@@ -200,8 +236,8 @@ namespace ExcelOrderAddIn
             this.Controls.Add(this.table1ComboBox);
             this.Name = "UserControl";
             this.Size = new System.Drawing.Size(436, 509);
-            this.Enter += new System.EventHandler(this.UserControl_Enter);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -223,5 +259,8 @@ namespace ExcelOrderAddIn
         private System.Windows.Forms.ComboBox table3ComboBox;
         private System.Windows.Forms.Button createBtn;
         private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button deleteGeneratedSheetsBtn;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

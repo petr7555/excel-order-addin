@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -35,24 +34,9 @@ namespace ExcelOrderAddIn
         {
             WorksheetItems = GetWorksheetItems();
 
-            RefreshTableComboBox(table1ComboBox, 0);
-            RefreshTableComboBox(table2ComboBox, 1);
-            RefreshTableComboBox(table3ComboBox, 2);
-        }
-
-        private void RefreshTableComboBox(ComboBox comboBox, int preferredIndex)
-        {
-            var prevIndex = comboBox.SelectedIndex;
-            comboBox.Items.Clear();
-            comboBox.Items.AddRange(WorksheetItems.ToArray());
-            if (comboBox.Items.Count >= prevIndex + 1)
-            {
-                comboBox.SelectedIndex = prevIndex;
-            }
-            if (comboBox.SelectedIndex == -1)
-            {
-                comboBox.SelectedIndex = Math.Min(preferredIndex, comboBox.Items.Count - 1);
-            }
+            RefreshTableComboBox(table1ComboBox, Properties.Settings.Default.Table1, 0);
+            RefreshTableComboBox(table2ComboBox, Properties.Settings.Default.Table2, 1);
+            RefreshTableComboBox(table3ComboBox, Properties.Settings.Default.Table3, 2);
         }
 
         private IEnumerable<WorksheetItem> GetWorksheetItems()
@@ -63,37 +47,31 @@ namespace ExcelOrderAddIn
             }
         }
 
-        private void table1ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void RefreshTableComboBox(ComboBox comboBox, string preferredTable, int preferredIndex)
         {
-            RefreshIdColComboBox(table1ComboBox, idCol1ComboBox);
-        }
+            comboBox.Items.Clear();
+            comboBox.Items.AddRange(WorksheetItems.ToArray());
 
-        private void table2ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            RefreshIdColComboBox(table2ComboBox, idCol2ComboBox);
-        }
-
-        private void table3ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            RefreshIdColComboBox(table3ComboBox, idCol3ComboBox);
-        }
-
-        private void RefreshIdColComboBox(ComboBox tableComboBox, ComboBox idColComboBox)
-        {
-            var prevIndex = idColComboBox.SelectedIndex;
-            idColComboBox.Items.Clear();
-            var items = (tableComboBox.SelectedItem as WorksheetItem).Worksheet.GetColumnNames().ToArray();
-            idColComboBox.Items.AddRange(items);
-            if (idColComboBox.Items.Count >= prevIndex + 1)
+            var allWorksheetsNames = comboBox.Items.OfType<WorksheetItem>().Select(item => item.Name);
+            if (allWorksheetsNames.Contains(preferredTable))
             {
-                idColComboBox.SelectedIndex = prevIndex;
+                comboBox.SelectedIndex = allWorksheetsNames.ToList().IndexOf(preferredTable);
             }
-            if (idColComboBox.SelectedIndex == -1 && idColComboBox.Items.Count > 0)
-            {
-                idColComboBox.SelectedIndex = 0;
-            }
+            // TODO zjistit, co je pohodlnější
+            //if (comboBox.SelectedIndex == -1)
+            //{
+            //    comboBox.SelectedIndex = Math.Min(preferredIndex, comboBox.Items.Count - 1);
+            //}
         }
 
+        /**
+         * 
+         * Main logic of plugin
+         * 
+         * 
+         * 
+         * 
+         */
         private void createBtn_Click(object sender, System.EventArgs e)
         {
             if (ValidateChildren(ValidationConstraints.Enabled))
@@ -108,27 +86,32 @@ namespace ExcelOrderAddIn
                 var joined = table1.Join(table2).Join(table3);
 
                 joined.PrintToWorksheet(newWorksheet);
-                
 
-                MessageBox.Show("Done");
+                MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
             }
         }
 
-        private Excel.Worksheet CreateNewWorksheet()
+        public static Excel.Worksheet CreateNewWorksheet()
         {
             Excel.Worksheet newWorksheet;
             newWorksheet = Globals.ThisAddIn.Application.Worksheets.Add();
+            var newName = FindNewName();
+            newWorksheet.Name = newName;
+            return newWorksheet;
+        }
+
+        private static string FindNewName()
+        {
             var newName = "New Order";
             var i = 2;
             while (Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>().Any(ws => ws.Name == newName))
             {
                 newName = $"New Order {i++}";
             }
-            newWorksheet.Name = newName;
-            return newWorksheet;
+            return newName;
         }
 
-        private void validateComboBox(ComboBox comboBox, System.ComponentModel.CancelEventArgs e)
+        private void ValidateComboBox(ComboBox comboBox, System.ComponentModel.CancelEventArgs e)
         {
             if (comboBox.SelectedIndex == -1)
             {
@@ -144,37 +127,101 @@ namespace ExcelOrderAddIn
 
         private void table1ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            validateComboBox(table1ComboBox, e);
+            ValidateComboBox(table1ComboBox, e);
         }
 
         private void table2ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            validateComboBox(table2ComboBox, e);
+            ValidateComboBox(table2ComboBox, e);
         }
 
         private void table3ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            validateComboBox(table3ComboBox, e);
+            ValidateComboBox(table3ComboBox, e);
         }
 
         private void idCol1ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            validateComboBox(idCol1ComboBox, e);
+            ValidateComboBox(idCol1ComboBox, e);
         }
 
         private void idCol2ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            validateComboBox(idCol2ComboBox, e);
+            ValidateComboBox(idCol2ComboBox, e);
         }
 
         private void idCol3ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            validateComboBox(idCol3ComboBox, e);
+            ValidateComboBox(idCol3ComboBox, e);
         }
 
-        private void UserControl_Enter(object sender, System.EventArgs e)
+        private void table1ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            MessageBox.Show("yes");
+            Properties.Settings.Default.Table1 = (table1ComboBox.SelectedItem as WorksheetItem).Name;
+
+            RefreshIdColComboBox(table1ComboBox, idCol1ComboBox, Properties.Settings.Default.IdCol1);
+        }
+
+        private void table2ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            Properties.Settings.Default.Table2 = (table2ComboBox.SelectedItem as WorksheetItem).Name;
+
+            RefreshIdColComboBox(table2ComboBox, idCol2ComboBox, Properties.Settings.Default.IdCol2);
+        }
+
+        private void table3ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            Properties.Settings.Default.Table3 = (table3ComboBox.SelectedItem as WorksheetItem).Name;
+
+            RefreshIdColComboBox(table3ComboBox, idCol3ComboBox, Properties.Settings.Default.IdCol3);
+        }
+
+        private void RefreshIdColComboBox(ComboBox tableComboBox, ComboBox idColComboBox, string preferredIdColumn)
+        {
+            idColComboBox.Items.Clear();
+            var items = (tableComboBox.SelectedItem as WorksheetItem).Worksheet.GetColumnNames();
+            idColComboBox.Items.AddRange(items.ToArray());
+
+            if (items.Contains(preferredIdColumn))
+            {
+                idColComboBox.SelectedIndex = items.IndexOf(preferredIdColumn);
+            }
+
+            if (idColComboBox.SelectedIndex == -1 && idColComboBox.Items.Count > 0)
+            {
+                idColComboBox.SelectedIndex = 0;
+            }
+        }
+
+        private void deleteGeneratedSheetsBtn_Click(object sender, EventArgs e)
+        {
+            var sheetName = "New Order";
+            var generatedSheets = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>().Where(ws => ws.Name.StartsWith(sheetName));
+            var count = generatedSheets.Count();
+
+            Globals.ThisAddIn.Application.Application.DisplayAlerts = false;
+            foreach (var worksheet in generatedSheets)
+            {
+                worksheet.Delete();
+            }
+            Globals.ThisAddIn.Application.Application.DisplayAlerts = true;
+
+            MessageBox.Show($"{count} sheets have been deleted.", "Success!");
+        }
+
+        private void idCol1ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.IdCol1 = idCol1ComboBox.SelectedItem as string;
+        }
+
+        private void idCol2ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.IdCol2 = idCol2ComboBox.SelectedItem as string;
+        }
+
+        private void idCol3ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.IdCol3 = idCol3ComboBox.SelectedItem as string;
         }
     }
 }
