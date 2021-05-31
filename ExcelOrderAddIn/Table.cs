@@ -36,16 +36,31 @@ namespace ExcelOrderAddIn
             var leftIdColIdx = IdColIdx;
             var rightIdColIdx = rightTable.IdColIdx;
 
-            // TODO zjistit index  sloupců, které vypadly, ty vyházet 
-            var newData = Data.Join(rightTable.Data,
+            // Join data on id columns, merge all columns (including the id column)
+            var joinedData = Data
+                .Join(rightTable.Data,
                 leftRow => leftRow.ElementAt(leftIdColIdx),
                 rightRow => rightRow.ElementAt(rightIdColIdx),
-                (leftRow, rightRow) => leftRow.Concat(rightRow))
-                .Select(row => row.ToArray()).ToArray();
+                (leftRow, rightRow) => leftRow.Concat(rightRow));
+
+            // Columns in the right table that are already in the left table
+            // Should be removed from the resulting table
+            var removedCols = Columns.Intersect(rightTable.Columns).ToList();
+
+            // Indices of those columns in the original table
+            // In the joined table, the index is shifted by the number of columns in the left table
+            var removedColsIndices = removedCols.Select(col => rightTable.Columns.IndexOf(col) + NCols);
+
+            // Remove columns from the joined table on the found indices
+            var filteredData = joinedData
+                .Select(row => row.Where((value, index) => !removedColsIndices.Contains(index)));
+
+            // Convert to proper type
+            var resultData = filteredData.Select(row => row.ToArray()).ToArray();
 
             var newCols = Columns.Union(rightTable.Columns).ToList();
 
-            return new Table(newCols, newData, IdCol);
+            return new Table(newCols, resultData, IdCol);
         }
 
         internal void PrintToWorksheet(Excel.Worksheet worksheet)

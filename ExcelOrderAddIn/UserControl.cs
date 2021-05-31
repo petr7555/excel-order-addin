@@ -17,6 +17,13 @@ namespace ExcelOrderAddIn
 
             RefreshItems();
             Globals.ThisAddIn.Application.SheetChange += Application_SheetChange;
+            Globals.ThisAddIn.Application.SheetActivate += Application_SheetActivate; ;
+
+        }
+
+        private void Application_SheetActivate(object Sh)
+        {
+            RefreshItems();
         }
 
         private void Application_SheetChange(object Sh, Excel.Range Target)
