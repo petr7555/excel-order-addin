@@ -85,10 +85,28 @@ namespace ExcelOrderAddIn
 
                 var joined = table1.Join(table2).Join(table3);
 
-                joined.PrintToWorksheet(newWorksheet);
+                joined.PrintToWorksheet(newWorksheet, 2);
+
+                PrintTotalPriceTable(newWorksheet, 7);
 
                 MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
             }
+        }
+
+        private void PrintTotalPriceTable(Excel.Worksheet worksheet, int leftOffset)
+        {
+            var titleRange = worksheet.Cells[1, 1 + leftOffset];
+            titleRange.Value2 = "Total order";
+            Styling.Apply(titleRange, Styling.Style.HEADER);
+
+            var unitsRange = worksheet.Cells[1, 2 + leftOffset];
+            Styling.Apply(unitsRange, Styling.Style.CALCULATION);
+            unitsRange.Formula = "=SUM(B2:B4)";
+
+            var totalPriceRange = worksheet.Cells[1, 3 + leftOffset];
+            Styling.Apply(totalPriceRange, Styling.Style.CALCULATION);
+            totalPriceRange.NumberFormat = "#,###,###.00 €";
+
         }
 
         public static Excel.Worksheet CreateNewWorksheet()

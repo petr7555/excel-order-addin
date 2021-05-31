@@ -63,14 +63,14 @@ namespace ExcelOrderAddIn
             return new Table(newCols, resultData, IdCol);
         }
 
-        internal void PrintToWorksheet(Excel.Worksheet worksheet)
+        internal void PrintToWorksheet(Excel.Worksheet worksheet, int topOffset = 0)
         {
-            PrintRawDataToWorksheet(worksheet);
+            PrintRawDataToWorksheet(worksheet, topOffset);
 
             FormatData(worksheet);
         }
 
-        internal void PrintRawDataToWorksheet(Excel.Worksheet worksheet)
+        internal void PrintRawDataToWorksheet(Excel.Worksheet worksheet, int topOffset)
         {
             if (NCols == 0)
             {
@@ -78,8 +78,8 @@ namespace ExcelOrderAddIn
             }
 
             // header
-            var headerStartCell = worksheet.Cells[1, 1] as Excel.Range;
-            var headerEndCell = worksheet.Cells[1, NCols] as Excel.Range;
+            var headerStartCell = worksheet.Cells[1 + topOffset, 1] as Excel.Range;
+            var headerEndCell = worksheet.Cells[1 + topOffset, NCols] as Excel.Range;
             var headerRange = worksheet.Range[headerStartCell, headerEndCell];
             headerRange.Value2 = Columns.ToExcelMultidimArray();
             Styling.Apply(headerRange, Styling.Style.HEADER);
@@ -91,18 +91,16 @@ namespace ExcelOrderAddIn
             }
 
             // skip header
-            var dataStartCell = worksheet.Cells[2, 1] as Excel.Range;
-            var dataEndCell = worksheet.Cells[NRows + 1, NCols] as Excel.Range;
+            var dataStartCell = worksheet.Cells[2 + topOffset, 1] as Excel.Range;
+            var dataEndCell = worksheet.Cells[NRows + 1 + topOffset, NCols] as Excel.Range;
             worksheet.Range[dataStartCell, dataEndCell].Value2 = Data.ToExcelMultidimArray();
         }
 
         internal void FormatData(Excel.Worksheet worksheet)
         {
             var usedRange = worksheet.UsedRange;
-            //worksheet.Sty
-            //Globals.ThisAddIn.Application.Workbook. workbook.Styles
             usedRange.Columns.AutoFit();
-            Styling.Apply(worksheet.Range["A1"], Styling.Style.CALCULATION);
+            // TODO
         }
 
         internal static Table FromComboBoxes(ComboBox tableComboBox, ComboBox idColComboBox)

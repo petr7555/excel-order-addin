@@ -181,13 +181,15 @@ namespace ExcelOrderAddIn
             // 
             // createBtn
             // 
+            this.createBtn.BackColor = System.Drawing.Color.LawnGreen;
+            this.createBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.createBtn.Location = new System.Drawing.Point(321, 128);
             this.createBtn.Name = "createBtn";
             this.createBtn.Size = new System.Drawing.Size(75, 23);
             this.createBtn.TabIndex = 12;
             this.createBtn.Text = "&Create";
             this.toolTip.SetToolTip(this.createBtn, "Creates  \'New Order\' sheet.");
-            this.createBtn.UseVisualStyleBackColor = true;
+            this.createBtn.UseVisualStyleBackColor = false;
             this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
             // 
             // errorProvider
@@ -197,7 +199,7 @@ namespace ExcelOrderAddIn
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.deleteGeneratedSheetsBtn);
-            this.groupBox1.Location = new System.Drawing.Point(196, 177);
+            this.groupBox1.Location = new System.Drawing.Point(3, 406);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(200, 100);
             this.groupBox1.TabIndex = 13;
@@ -206,13 +208,14 @@ namespace ExcelOrderAddIn
             // 
             // deleteGeneratedSheetsBtn
             // 
+            this.deleteGeneratedSheetsBtn.BackColor = System.Drawing.Color.LightCoral;
             this.deleteGeneratedSheetsBtn.Location = new System.Drawing.Point(6, 19);
             this.deleteGeneratedSheetsBtn.Name = "deleteGeneratedSheetsBtn";
             this.deleteGeneratedSheetsBtn.Size = new System.Drawing.Size(188, 23);
             this.deleteGeneratedSheetsBtn.TabIndex = 0;
             this.deleteGeneratedSheetsBtn.Text = "Delete generated sheets";
             this.toolTip.SetToolTip(this.deleteGeneratedSheetsBtn, "Deletes all sheets starting with \'New Order\'.");
-            this.deleteGeneratedSheetsBtn.UseVisualStyleBackColor = true;
+            this.deleteGeneratedSheetsBtn.UseVisualStyleBackColor = false;
             this.deleteGeneratedSheetsBtn.Click += new System.EventHandler(this.deleteGeneratedSheetsBtn_Click);
             // 
             // UserControl
