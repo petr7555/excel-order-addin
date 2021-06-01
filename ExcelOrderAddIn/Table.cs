@@ -119,15 +119,20 @@ namespace ExcelOrderAddIn
 
             var newOrderOfIndices = resultColumns.Select(col => Columns.IndexOf(col));
 
+            //Data = Data.
+            //    Select(row => {
+            //        var reorderedValues = new object[resultColumns.Count];
+            //        for (int i = 0; i < resultColumns.Count; i++)
+            //        {
+            //            reorderedValues[i] = row[newOrderOfIndices.ElementAt(i)];
+            //        }
+            //        return reorderedValues;
+            //    }).ToArray();
+
+
             Data = Data.
-                Select(row => {
-                    var reorderedValues = new object[resultColumns.Count];
-                    for (int i = 0; i < resultColumns.Count; i++)
-                    {
-                        reorderedValues[i] = row[newOrderOfIndices.ElementAt(i)];
-                    }
-                    return reorderedValues;
-                }).ToArray();
+                Select(row => newOrderOfIndices.Select(index => row[index])).ToJaggedArray();
+
             Columns = resultColumns;
         }
 
