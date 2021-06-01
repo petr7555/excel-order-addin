@@ -94,5 +94,17 @@ namespace ExcelOrderAddIn.Properties {
                 this["IdCol3"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\Mac\\Home\\Downloads\\prilohy_105850")]
+        public string ImgFolder {
+            get {
+                return ((string)(this["ImgFolder"]));
+            }
+            set {
+                this["ImgFolder"] = value;
+            }
+        }
     }
 }

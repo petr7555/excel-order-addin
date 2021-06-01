@@ -20,5 +20,8 @@
     <Setting Name="IdCol3" Type="System.String" Scope="User">
       <Value Profile="(Default)">Produkt</Value>
     </Setting>
+    <Setting Name="ImgFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\Mac\Home\Downloads\prilohy_105850</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

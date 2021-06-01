@@ -47,6 +47,9 @@ namespace ExcelOrderAddIn
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.deleteGeneratedSheetsBtn = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.selectImgFolderBtn = new System.Windows.Forms.Button();
+            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.imgFolderTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -183,9 +186,9 @@ namespace ExcelOrderAddIn
             // 
             this.createBtn.BackColor = System.Drawing.Color.LawnGreen;
             this.createBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.createBtn.Location = new System.Drawing.Point(321, 128);
+            this.createBtn.Location = new System.Drawing.Point(308, 157);
             this.createBtn.Name = "createBtn";
-            this.createBtn.Size = new System.Drawing.Size(75, 23);
+            this.createBtn.Size = new System.Drawing.Size(88, 29);
             this.createBtn.TabIndex = 12;
             this.createBtn.Text = "&Create";
             this.toolTip.SetToolTip(this.createBtn, "Creates  \'New Order\' sheet.");
@@ -218,11 +221,35 @@ namespace ExcelOrderAddIn
             this.deleteGeneratedSheetsBtn.UseVisualStyleBackColor = false;
             this.deleteGeneratedSheetsBtn.Click += new System.EventHandler(this.deleteGeneratedSheetsBtn_Click);
             // 
+            // selectImgFolderBtn
+            // 
+            this.selectImgFolderBtn.Location = new System.Drawing.Point(275, 128);
+            this.selectImgFolderBtn.Name = "selectImgFolderBtn";
+            this.selectImgFolderBtn.Size = new System.Drawing.Size(121, 23);
+            this.selectImgFolderBtn.TabIndex = 14;
+            this.selectImgFolderBtn.Text = "&Select images folder";
+            this.toolTip.SetToolTip(this.selectImgFolderBtn, "Folder to look for the images in.");
+            this.selectImgFolderBtn.UseVisualStyleBackColor = true;
+            this.selectImgFolderBtn.Click += new System.EventHandler(this.selectImgFolderBtn_Click);
+            // 
+            // folderBrowserDialog
+            // 
+            // 
+            // selectedImageFolderTextBox
+            // 
+            this.imgFolderTextBox.Location = new System.Drawing.Point(14, 130);
+            this.imgFolderTextBox.Name = "selectedImageFolderTextBox";
+            this.imgFolderTextBox.ReadOnly = true;
+            this.imgFolderTextBox.Size = new System.Drawing.Size(257, 20);
+            this.imgFolderTextBox.TabIndex = 15;
+            // 
             // UserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
+            this.Controls.Add(this.imgFolderTextBox);
+            this.Controls.Add(this.selectImgFolderBtn);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.createBtn);
             this.Controls.Add(this.idCol3ComboBox);
@@ -265,5 +292,8 @@ namespace ExcelOrderAddIn
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button deleteGeneratedSheetsBtn;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.TextBox imgFolderTextBox;
+        private System.Windows.Forms.Button selectImgFolderBtn;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     }
 }
