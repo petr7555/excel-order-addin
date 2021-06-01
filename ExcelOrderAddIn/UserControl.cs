@@ -85,9 +85,15 @@ namespace ExcelOrderAddIn
 
                 var joined = table1.Join(table2).Join(table3);
 
-                joined.PrintToWorksheet(newWorksheet, 2);
+                joined.InsertColumns();
+
+                joined.RenameColumns();
+
+                joined.SelectColumns();
 
                 PrintTotalPriceTable(newWorksheet, 7);
+
+                joined.PrintToWorksheet(newWorksheet, 2);
 
                 MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
             }

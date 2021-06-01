@@ -21,7 +21,7 @@ namespace ExcelOrderAddIn
         private int IdColIdx { get => Columns.IndexOf(IdCol); }
 
         private Table()
-        {          
+        {
         }
 
         public Table(IList<string> columns, object[][] data, string idCol)
@@ -55,12 +55,9 @@ namespace ExcelOrderAddIn
             var filteredData = joinedData
                 .Select(row => row.Where((value, index) => !removedColsIndices.Contains(index)));
 
-            // Convert to proper type
-            var resultData = filteredData.Select(row => row.ToArray()).ToArray();
-
             var newCols = Columns.Union(rightTable.Columns).ToList();
 
-            return new Table(newCols, resultData, IdCol);
+            return new Table(newCols, filteredData.ToJaggedArray(), IdCol);
         }
 
         internal void PrintToWorksheet(Excel.Worksheet worksheet, int topOffset = 0)
@@ -94,6 +91,120 @@ namespace ExcelOrderAddIn
             var dataStartCell = worksheet.Cells[2 + topOffset, 1] as Excel.Range;
             var dataEndCell = worksheet.Cells[NRows + 1 + topOffset, NCols] as Excel.Range;
             worksheet.Range[dataStartCell, dataEndCell].Value2 = Data.ToExcelMultidimArray();
+        }
+
+        internal void SelectColumns()
+        {
+            var resultColumns = new List<string>() { 
+                "Image",
+                "Product",
+                "Item",
+                "EAN",
+                "Description",
+                "Colli (pcs in carton)",
+                "NEW",
+                "EXW CZ",
+                "Order",
+                "Total order",
+                "RRP",
+                "In stock",
+                "Stock comming",
+                "Note for stock",
+                "Brand",
+                "Category",
+                "Product type",
+                "Theme",
+                "Country of origin",
+            };
+
+            var newOrderOfIndices = resultColumns.Select(col => Columns.IndexOf(col));
+
+            Data = Data.
+                Select(row => {
+                    var reorderedValues = new object[resultColumns.Count];
+                    for (int i = 0; i < resultColumns.Count; i++)
+                    {
+                        reorderedValues[i] = row[newOrderOfIndices.ElementAt(i)];
+                    }
+                    return reorderedValues;
+                }).ToArray();
+            Columns = resultColumns;
+        }
+
+        internal void RenameColumns()
+        {
+            var dict = new Dictionary<string, string>
+                {
+                    { "Produkt", "Product" },
+                    { "Katalogové číslo", "Item" },
+                    { "Popis alternativní", "Description" },
+                {"Balení karton (ks)", "Colli (pcs in carton)" },
+                    {"Cena", "EXW CZ" },
+                { "Cena DMOC EUR", "RRP"},
+                     {"K dispozici", "In stock" },
+                 {"Bude k dispozici", "Stock comming" },
+               {"Výrobce", "Brand" },
+               {"Údaj 2", "Category" },
+               {"Údaj 1", "Product type" },
+               {"Země původu", "Country of origin" },
+                };
+
+            Columns = Columns.Select(col =>
+            {
+                if (dict.ContainsKey(col))
+                {
+                    return dict[col];
+                }
+                return col;
+            }).ToList();
+        }
+
+        internal void InsertColumns()
+        {
+            InsertImageColumn();
+            InsertNewColumn();
+            InsertOrderColumn();
+            InsertTotalOrderColumn();
+            InsertNoteForStockColumn();
+            InsertThemeColumn();
+        }
+
+        private void InsertThemeColumn()
+        {
+            InsertEmptyColumn("Theme");
+        }
+
+        private void InsertNoteForStockColumn()
+        {
+            InsertEmptyColumn("Note for stock");
+        }
+
+        private void InsertTotalOrderColumn()
+        {
+            InsertEmptyColumn("Total order");
+        }
+
+        private void InsertOrderColumn()
+        {
+            InsertEmptyColumn("Order");
+        }
+
+        private void InsertNewColumn()
+        {
+            InsertEmptyColumn("NEW");
+        }
+
+        private void InsertImageColumn()
+        {
+            InsertEmptyColumn("Image");
+        }
+
+        private void InsertEmptyColumn(string columnName)
+        {
+            Columns.Add(columnName);
+            Data = Data
+               .Select(row => row.Append(null))
+               .ToJaggedArray();
         }
 
         internal void FormatData(Excel.Worksheet worksheet)

@@ -104,32 +104,9 @@ namespace ExcelOrderAddIn
             return result;
         }
 
-        //public static T[,] ToExcelMultidimArray<T>(this IEnumerable<IEnumerable<T>> array)
-        //{
-        //    var rows = array.Count();
-
-        //    if (rows == 0)
-        //    {
-        //        return new T[0, 0];
-        //    }
-
-        //    var cols = array.ElementAt(0).Count();
-
-        //    var result = new T[rows, cols];
-
-        //    var rowIdx = 0;
-        //    foreach (var row in array)
-        //    {
-        //        var colIdx = 0;
-        //        foreach (var col in row)
-        //        {
-        //            result[rowIdx, colIdx++] = col;
-        //        }
-        //        rowIdx++;
-        //    }
-
-        //    return result;
-        //}
-
+        public static T[][] ToJaggedArray<T>(this IEnumerable<IEnumerable<T>> array)
+        {
+            return array.Select(row => row.ToArray()).ToArray();
+        }
     }
 }
