@@ -17,7 +17,13 @@ namespace ExcelOrderAddIn
         private const int ImgColHeight = 76;
         private const int ImgColWidth = 13;
         private const int ImgSize = 72; // = 96 pixels
-        private const string PriceFormat = "#,###,###.00 €";
+
+        // It is good to figure these out by recording VB macro in Excel.
+        // Quotes are escaped by doubling them both in VB and regex.
+        private const string AccountingFormat = @"_([$€-x-euro2] * #,##0.00_);_([$€-x-euro2] * (#,##0.00);_([$€-x-euro2] * ""-""??_);_(@_)";
+        private const string IntegerFormat = "0";
+        private const string TextFormat = "@";
+
         private IList<string> Columns;
         public object[][] Data = new object[0][];
         private string IdCol;
@@ -81,66 +87,177 @@ namespace ExcelOrderAddIn
                 return;
             }
 
-            // header
+            // insert header
             var headerStartCell = worksheet.Cells[1 + topOffset, 1] as Excel.Range;
             var headerEndCell = worksheet.Cells[1 + topOffset, NCols] as Excel.Range;
             var headerRange = worksheet.Range[headerStartCell, headerEndCell];
             headerRange.Value2 = Columns.ToExcelMultidimArray();
             Styling.Apply(headerRange, Styling.Style.HEADER);
 
-
             if (NRows == 0)
             {
                 return;
             }
 
-            // skip header
+            // insert data
             var dataStartCell = worksheet.Cells[2 + topOffset, 1] as Excel.Range;
             var dataEndCell = worksheet.Cells[NRows + 1 + topOffset, NCols] as Excel.Range;
             var dataRange = worksheet.Range[dataStartCell, dataEndCell];
             dataRange.Value2 = Data.ToExcelMultidimArray();
 
-            // Set row height so that images fit
-            dataRange.RowHeight = ImgColHeight;
-
             // Autofit all columns
             var usedRange = worksheet.UsedRange;
             usedRange.Columns.AutoFit();
 
-            // Make 'Image' column wider
-            worksheet.Columns[1].ColumnWidth = ImgColWidth;
+            // Set row height so that images fit
+            dataRange.RowHeight = ImgColHeight;
 
-            // Format 'Order'
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.INPUT, "Order");
+            FormatImageColumn(worksheet);
+            FormatEANColumn(worksheet, topOffset);
+            FormatColliColumn(worksheet, topOffset);
+            FormatNewColumn(worksheet, topOffset);
+            FormatExwCZColumn(worksheet, topOffset);
+            FormatOrderColumn(worksheet, topOffset);
+            FormatTotalOrderColumn(worksheet, topOffset);
+            FormatRRPColumn(worksheet, topOffset);
+            FormatInStockColumn(worksheet, topOffset);
+            FormatWillBeAvailableColumn(worksheet, topOffset);
+            FormatStockComingColumn(worksheet, topOffset);
+            FormatNoteForStockColumn(worksheet, topOffset);
 
-            // Format 'Total order'
-            FormatTotalOrder(worksheet, topOffset);
-
-            // Format 'Stock comming'
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Stock comming");
-
-            // Format 'Note for stock'
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Note for stock");
-
+            AddBorder(headerRange);
+            AddBorder(dataRange);
         }
 
-        private void FormatTotalOrder(Excel.Worksheet worksheet, int topOffset)
+        private void AddBorder(Excel.Range range)
+        {
+            range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+        }
+
+        private void FormatWillBeAvailableColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Will be available");
+            FormatColumnAsInteger(worksheet, topOffset, "Stock comming");
+        }
+
+        private void FormatInStockColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.SALMON_BOLD, "In stock");
+            FormatColumnAsInteger(worksheet, topOffset, "In stock");
+        }
+
+        private void FormatRRPColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.BOLD_TEXT, "RRP");
+            FormatColumnAsAccounting(worksheet, topOffset, "RRP");
+        }
+
+        private void FormatExwCZColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            FormatColumnAsAccounting(worksheet, topOffset, "EXW CZ");
+        }
+
+        private void FormatNewColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.RED_BOLD_TEXT, "NEW");
+
+            var colIndex = Columns.IndexOf("NEW") + 1;
+            var headerCell = worksheet.Cells[topOffset + 1, colIndex];
+            Styling.Apply(headerCell, Styling.Style.RED_BOLD_HEADER_TEXT);
+        }
+
+        private void FormatColliColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            FormatColumnAsInteger(worksheet, topOffset, "Colli (pcs in carton)");
+        }
+
+        private void FormatNoteForStockColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Note for stock");
+            FormatColumnAsText(worksheet, topOffset, "Note for stock");
+        }
+
+        private void FormatStockComingColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Stock comming");
+            FormatColumnAsInteger(worksheet, topOffset, "Stock comming");
+        }
+
+        private void FormatImageColumn(Excel.Worksheet worksheet)
+        {
+            // Make column wider
+            worksheet.Columns[1].ColumnWidth = ImgColWidth;
+        }
+
+        private void FormatOrderColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.INPUT, "Order");
+        }
+
+        private void FormatEANColumn(Excel.Worksheet worksheet, int topOffset)
+        {
+            FormatColumnAsInteger(worksheet, topOffset, "EAN");
+        }
+
+        private void FormatTotalOrderColumn(Excel.Worksheet worksheet, int topOffset)
         {
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.CALCULATION, "Total order");
-            // 
+            InsertTotalOrderFormula(worksheet, topOffset);
+            FormatColumnAsAccounting(worksheet, topOffset, "Total order");
+        }
+
+        private void FormatColumnAsAccounting(Excel.Worksheet worksheet, int topOffset, string columnName)
+        {
+            var range = GetColumnRange(worksheet, topOffset, columnName);
+            range.NumberFormat = AccountingFormat;
+        }
+
+        private void FormatColumnAsInteger(Excel.Worksheet worksheet, int topOffset, string columnName)
+        {
+            var range = GetColumnRange(worksheet, topOffset, columnName);
+            range.NumberFormat = IntegerFormat;
+        }
+
+        private void FormatColumnAsText(Excel.Worksheet worksheet, int topOffset, string columnName)
+        {
+            var range = GetColumnRange(worksheet, topOffset, columnName);
+            range.NumberFormat = TextFormat;
+        }
+
+        private void InsertTotalOrderFormula(Excel.Worksheet worksheet, int topOffset)
+        {
             var totalOrderIndex = Columns.IndexOf("Total order") + 1;
             var priceIndex = Columns.IndexOf("EXW CZ") + 1;
             var orderIndex = Columns.IndexOf("Order") + 1;
-            
-            for (int i = 0; i < NRows; i++)
+
+            Parallel.For(0, NRows, (i) =>
             {
                 var row = topOffset + 2 + i;
-                worksheet.Cells[i + 2 + topOffset, totalOrderIndex].Formula =
+                worksheet.Cells[row, totalOrderIndex].Formula =
                 $"={(priceIndex).ToLetter()}{row}*" +
                 $"{(orderIndex).ToLetter()}{row}";
-            }
-            var range = GetColumnRange(worksheet, topOffset, "Total order");
-            range.NumberFormat = PriceFormat;
+            });
+
+            //var nBatches = 16;
+            //var batchSize = NRows / (nBatches-1);
+            //var lastBatchSize = NRows % (nBatches - 1);
+
+            //Parallel.For(0, nBatches, (batch) =>
+            //{
+            //    var startCell = topOffset + 2 + batch * batchSize;
+            //    var cellsInBatch = batchSize;
+            //    if (batch == nBatches -1)
+            //    {
+            //        cellsInBatch = lastBatchSize;
+            //    }
+            //    for (int i = 0; i < cellsInBatch; i++)
+            //    {
+            //        var row = startCell + i;
+            //        worksheet.Cells[row, totalOrderIndex].Formula =
+            //        $"={(priceIndex).ToLetter()}{row}*" +
+            //        $"{(orderIndex).ToLetter()}{row}";
+            //    }
+            //});
         }
 
         private void ApplyStyleToColumn(Excel.Worksheet worksheet, int topOffset, Styling.Style style, string columnName)
@@ -175,10 +292,12 @@ namespace ExcelOrderAddIn
             // Assumes that 'Total order' follows directly after 'Order'
             var totalPriceCell = worksheet.Cells[1, orderColIndex + 1];
             Styling.Apply(totalPriceCell, Styling.Style.CALCULATION);
-            totalPriceCell.NumberFormat = PriceFormat;
+            totalPriceCell.NumberFormat = AccountingFormat;
             totalPriceCell.Formula = $"=SUM(" +
                 $"{(orderColIndex + 1).ToLetter()}{topOffset + 2}:" +
                 $"{(orderColIndex + 1).ToLetter()}{topOffset + 1 + NRows})";
+
+            AddBorder(worksheet.Range[titleCell, totalPriceCell]);
         }
 
         /**
@@ -291,7 +410,6 @@ namespace ExcelOrderAddIn
                {"Údaj 2", "Category" },
                {"Údaj 1", "Product type" },
                {"Země původu", "Country of origin" },
-                { "Bude bude", "Will be available"},
                 };
 
             Columns = Columns.Select(col =>
@@ -312,14 +430,16 @@ namespace ExcelOrderAddIn
             InsertTotalOrderColumn();
             InsertNoteForStockColumn();
             InsertThemeColumn();
-
-            InsertBudeBude();
+            InsertWillBeAvailableColumn();
         }
 
-        private void InsertBudeBude()
+        /**
+         * "Bude bude"
+         */
+        private void InsertWillBeAvailableColumn()
         {
 
-            Columns.Add("Bude bude");
+            Columns.Add("Will be available");
             Data = Data
                .Select(row => row.Append(
                    Convert.ToInt32(row[Columns.IndexOf("Bude k dispozici")]) +

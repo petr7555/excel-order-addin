@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -15,8 +16,9 @@ namespace ExcelOrderAddIn
             InitializeComponent();
 
             RefreshItems();
-            Globals.ThisAddIn.Application.SheetChange += Application_SheetChange;
-            Globals.ThisAddIn.Application.SheetActivate += Application_SheetActivate;
+            // Was too slow.
+            //Globals.ThisAddIn.Application.SheetChange += Application_SheetChange;
+            //Globals.ThisAddIn.Application.SheetActivate += Application_SheetActivate;
 
             InitializeImageFolderPicker();
         }
@@ -81,6 +83,7 @@ namespace ExcelOrderAddIn
          */
         private void createBtn_Click(object sender, System.EventArgs e)
         {
+
             if (ValidateChildren(ValidationConstraints.Enabled))
             {
 
@@ -111,7 +114,9 @@ namespace ExcelOrderAddIn
                 Globals.ThisAddIn.Application.ScreenUpdating = true;
 
                 MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
+
             }
+
         }
 
         public static Excel.Worksheet CreateNewWorksheet()
@@ -254,6 +259,11 @@ namespace ExcelOrderAddIn
                 imgFolderTextBox.Text = folderBrowserDialog.SelectedPath;
                 Properties.Settings.Default.ImgFolder = folderBrowserDialog.SelectedPath;
             }
+        }
+
+        private void refreshBtn_Click(object sender, EventArgs e)
+        {
+            RefreshItems();
         }
     }
 }

@@ -30,6 +30,7 @@ namespace ExcelOrderAddIn
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserControl));
             this.table1ComboBox = new System.Windows.Forms.ComboBox();
             this.table1Label = new System.Windows.Forms.Label();
             this.idCol1Label = new System.Windows.Forms.Label();
@@ -42,7 +43,6 @@ namespace ExcelOrderAddIn
             this.idCol3Label = new System.Windows.Forms.Label();
             this.table3Label = new System.Windows.Forms.Label();
             this.table3ComboBox = new System.Windows.Forms.ComboBox();
-            this.createBtn = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.deleteGeneratedSheetsBtn = new System.Windows.Forms.Button();
@@ -50,6 +50,10 @@ namespace ExcelOrderAddIn
             this.selectImgFolderBtn = new System.Windows.Forms.Button();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.imgFolderTextBox = new System.Windows.Forms.TextBox();
+            this.refreshBtnImageList = new System.Windows.Forms.ImageList(this.components);
+            this.refreshBtn = new System.Windows.Forms.Button();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.createBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -182,27 +186,15 @@ namespace ExcelOrderAddIn
             this.table3ComboBox.SelectedIndexChanged += new System.EventHandler(this.table3ComboBox_SelectedIndexChanged);
             this.table3ComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.table3ComboBox_Validating);
             // 
-            // createBtn
-            // 
-            this.createBtn.BackColor = System.Drawing.Color.LawnGreen;
-            this.createBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.createBtn.Location = new System.Drawing.Point(308, 157);
-            this.createBtn.Name = "createBtn";
-            this.createBtn.Size = new System.Drawing.Size(88, 29);
-            this.createBtn.TabIndex = 12;
-            this.createBtn.Text = "&Create";
-            this.toolTip.SetToolTip(this.createBtn, "Creates  \'New Order\' sheet.");
-            this.createBtn.UseVisualStyleBackColor = false;
-            this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
-            // 
             // errorProvider
             // 
             this.errorProvider.ContainerControl = this;
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox1.Controls.Add(this.deleteGeneratedSheetsBtn);
-            this.groupBox1.Location = new System.Drawing.Point(3, 406);
+            this.groupBox1.Location = new System.Drawing.Point(14, 367);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(200, 100);
             this.groupBox1.TabIndex = 13;
@@ -232,26 +224,66 @@ namespace ExcelOrderAddIn
             this.selectImgFolderBtn.UseVisualStyleBackColor = true;
             this.selectImgFolderBtn.Click += new System.EventHandler(this.selectImgFolderBtn_Click);
             // 
-            // folderBrowserDialog
-            // 
-            // 
-            // selectedImageFolderTextBox
+            // imgFolderTextBox
             // 
             this.imgFolderTextBox.Location = new System.Drawing.Point(14, 130);
-            this.imgFolderTextBox.Name = "selectedImageFolderTextBox";
+            this.imgFolderTextBox.Name = "imgFolderTextBox";
             this.imgFolderTextBox.ReadOnly = true;
             this.imgFolderTextBox.Size = new System.Drawing.Size(257, 20);
             this.imgFolderTextBox.TabIndex = 15;
+            // 
+            // refreshBtnImageList
+            // 
+            this.refreshBtnImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("refreshBtnImageList.ImageStream")));
+            this.refreshBtnImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.refreshBtnImageList.Images.SetKeyName(0, "refresh.png");
+            // 
+            // refreshBtn
+            // 
+            this.refreshBtn.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.refreshBtn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.refreshBtn.ImageIndex = 0;
+            this.refreshBtn.ImageList = this.refreshBtnImageList;
+            this.refreshBtn.Location = new System.Drawing.Point(308, 12);
+            this.refreshBtn.Name = "refreshBtn";
+            this.refreshBtn.Size = new System.Drawing.Size(88, 29);
+            this.refreshBtn.TabIndex = 17;
+            this.refreshBtn.Text = "&Refresh";
+            this.refreshBtn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.refreshBtn.UseVisualStyleBackColor = false;
+            this.refreshBtn.Click += new System.EventHandler(this.refreshBtn_Click);
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(14, 157);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(294, 29);
+            this.progressBar.TabIndex = 19;
+            // 
+            // createBtn
+            // 
+            this.createBtn.BackColor = System.Drawing.Color.LawnGreen;
+            this.createBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.createBtn.Location = new System.Drawing.Point(314, 157);
+            this.createBtn.Name = "createBtn";
+            this.createBtn.Size = new System.Drawing.Size(82, 29);
+            this.createBtn.TabIndex = 20;
+            this.createBtn.Text = "&Create";
+            this.toolTip.SetToolTip(this.createBtn, "Creates  \'New Order\' sheet.");
+            this.createBtn.UseVisualStyleBackColor = false;
+            this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
             // 
             // UserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
+            this.Controls.Add(this.createBtn);
+            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.refreshBtn);
             this.Controls.Add(this.imgFolderTextBox);
             this.Controls.Add(this.selectImgFolderBtn);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.createBtn);
             this.Controls.Add(this.idCol3ComboBox);
             this.Controls.Add(this.idCol3Label);
             this.Controls.Add(this.table3Label);
@@ -264,8 +296,9 @@ namespace ExcelOrderAddIn
             this.Controls.Add(this.idCol1Label);
             this.Controls.Add(this.table1Label);
             this.Controls.Add(this.table1ComboBox);
+            this.MinimumSize = new System.Drawing.Size(408, 300);
             this.Name = "UserControl";
-            this.Size = new System.Drawing.Size(436, 509);
+            this.Size = new System.Drawing.Size(413, 470);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -274,8 +307,6 @@ namespace ExcelOrderAddIn
         }
 
         #endregion
-
-        private System.Windows.Forms.ComboBox table1ComboBox;
         private System.Windows.Forms.Label table1Label;
         private System.Windows.Forms.Label idCol1Label;
         private System.Windows.Forms.ComboBox idCol1ComboBox;
@@ -287,7 +318,6 @@ namespace ExcelOrderAddIn
         private System.Windows.Forms.Label idCol3Label;
         private System.Windows.Forms.Label table3Label;
         private System.Windows.Forms.ComboBox table3ComboBox;
-        private System.Windows.Forms.Button createBtn;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button deleteGeneratedSheetsBtn;
@@ -295,5 +325,10 @@ namespace ExcelOrderAddIn
         private System.Windows.Forms.TextBox imgFolderTextBox;
         private System.Windows.Forms.Button selectImgFolderBtn;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private System.Windows.Forms.Button refreshBtn;
+        private System.Windows.Forms.ImageList refreshBtnImageList;
+        private System.Windows.Forms.ComboBox table1ComboBox;
+        private System.Windows.Forms.Button createBtn;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }

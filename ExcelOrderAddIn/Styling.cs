@@ -26,10 +26,11 @@ namespace ExcelOrderAddIn
             CALCULATION, // Exists
             INPUT, // Exists
             HEADER,
-            SALMON,
+            SALMON_BOLD,
             YELLOW,
             BOLD_TEXT,
-            RED_TEXT,
+            RED_BOLD_TEXT,
+            RED_BOLD_HEADER_TEXT,
         }
 
         public static void Apply(Excel.Range range, Style style)
@@ -45,8 +46,8 @@ namespace ExcelOrderAddIn
                 case Style.HEADER:
                     ApplyHeader(range);
                     break;
-                case Style.SALMON:
-                    ApplySalmon(range);
+                case Style.SALMON_BOLD:
+                    ApplySalmonBold(range);
                     break;
                 case Style.YELLOW:
                     ApplyYellow(range);
@@ -54,8 +55,11 @@ namespace ExcelOrderAddIn
                 case Style.BOLD_TEXT:
                     ApplyBoldText(range);
                     break;
-                case Style.RED_TEXT:
-                    ApplyRedText(range);
+                case Style.RED_BOLD_TEXT:
+                    ApplyRedBoldText(range);
+                    break;
+                case Style.RED_BOLD_HEADER_TEXT:
+                    ApplyRedBoldHeaderText(range);
                     break;
                 default:
                     throw new NotImplementedException($"The style {style} is not implemented.");
@@ -82,11 +86,12 @@ namespace ExcelOrderAddIn
             range.Style = styleName;
         }
 
-        private static void ApplySalmon(Excel.Range range)
+        private static void ApplySalmonBold(Excel.Range range)
         {
-            var styleName = "Salmon_addin";
+            var styleName = "SalmonBold_addin";
             new StyleBuilder(styleName)
-                .WithBackgroundColor(SALMON);
+                .WithBackgroundColor(SALMON)
+                .WithBold();
             range.Style = styleName;
         }
 
@@ -106,13 +111,25 @@ namespace ExcelOrderAddIn
             range.Style = styleName;
         }
 
-        private static void ApplyRedText(Excel.Range range)
+        private static void ApplyRedBoldText(Excel.Range range)
         {
-            var styleName = "RedText_addin";
+            var styleName = "RedBoldText_addin";
             new StyleBuilder(styleName)
-                .WithTextColor(RED);
+                .WithTextColor(RED)
+                .WithBold();
             range.Style = styleName;
         }
+
+        private static void ApplyRedBoldHeaderText(Excel.Range range)
+        {
+            var styleName = "RedBoldHeaderText_addin";
+            new StyleBuilder(styleName)
+                .WithBackgroundColor(GREY)
+                .WithTextColor(RED)
+                .WithBold();
+            range.Style = styleName;
+        }
+
 
         public class StyleBuilder
         {
