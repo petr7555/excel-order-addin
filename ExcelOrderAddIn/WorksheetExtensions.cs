@@ -30,9 +30,13 @@ namespace ExcelOrderAddIn
 
         public static IList<string> GetColumnNames(this Excel.Worksheet worksheet)
         {
-            try
+            if (!worksheet.Exists())
             {
-                  var i = 1;
+                MessageBox.Show($"The selected worksheet does not exist anymore, please refresh.", "Refresh!");
+                return new List<string>();
+            }
+
+                var i = 1;
                 object column;
                 var result = new List<string>();
                 while ((column = worksheet.Cells[1, i++].Value2) != null)
@@ -40,12 +44,21 @@ namespace ExcelOrderAddIn
                     result.Add(column.ToString());
                 }
                 return result;
-            } catch (System.Runtime.InteropServices.COMException e)
-            {
-                MessageBox.Show($"The selected worksheet does not exist anymore, please refresh.", "Refresh!");
-                return new List<string>();
-            }
-           
+        }
+
+        public static bool Exists(this Excel.Worksheet worksheet)
+        {
+            //try
+                //{
+                var name = worksheet.Name;
+                //}
+                //catch (System.Runtime.InteropServices.COMException e)
+                //{
+                //return false;
+               
+                //}
+            return true;
+
         }
     }
 }
