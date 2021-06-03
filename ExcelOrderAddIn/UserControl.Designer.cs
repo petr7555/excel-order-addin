@@ -48,12 +48,12 @@ namespace ExcelOrderAddIn
             this.deleteGeneratedSheetsBtn = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.selectImgFolderBtn = new System.Windows.Forms.Button();
+            this.createBtn = new System.Windows.Forms.Button();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.imgFolderTextBox = new System.Windows.Forms.TextBox();
             this.refreshBtnImageList = new System.Windows.Forms.ImageList(this.components);
             this.refreshBtn = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.createBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -91,6 +91,8 @@ namespace ExcelOrderAddIn
             // 
             // idCol1ComboBox
             // 
+            this.idCol1ComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.idCol1ComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.idCol1ComboBox.FormattingEnabled = true;
             this.idCol1ComboBox.Location = new System.Drawing.Point(275, 47);
             this.idCol1ComboBox.Name = "idCol1ComboBox";
@@ -102,6 +104,8 @@ namespace ExcelOrderAddIn
             // 
             // idCol2ComboBox
             // 
+            this.idCol2ComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.idCol2ComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.idCol2ComboBox.FormattingEnabled = true;
             this.idCol2ComboBox.Location = new System.Drawing.Point(275, 74);
             this.idCol2ComboBox.Name = "idCol2ComboBox";
@@ -188,6 +192,7 @@ namespace ExcelOrderAddIn
             // 
             // errorProvider
             // 
+            this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this.errorProvider.ContainerControl = this;
             // 
             // groupBox1
@@ -224,6 +229,19 @@ namespace ExcelOrderAddIn
             this.selectImgFolderBtn.UseVisualStyleBackColor = true;
             this.selectImgFolderBtn.Click += new System.EventHandler(this.selectImgFolderBtn_Click);
             // 
+            // createBtn
+            // 
+            this.createBtn.BackColor = System.Drawing.Color.LawnGreen;
+            this.createBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.createBtn.Location = new System.Drawing.Point(314, 157);
+            this.createBtn.Name = "createBtn";
+            this.createBtn.Size = new System.Drawing.Size(82, 29);
+            this.createBtn.TabIndex = 20;
+            this.createBtn.Text = "&Create";
+            this.toolTip.SetToolTip(this.createBtn, "Creates  \'New Order\' sheet.");
+            this.createBtn.UseVisualStyleBackColor = false;
+            this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
+            // 
             // imgFolderTextBox
             // 
             this.imgFolderTextBox.Location = new System.Drawing.Point(14, 130);
@@ -259,19 +277,6 @@ namespace ExcelOrderAddIn
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(294, 29);
             this.progressBar.TabIndex = 19;
-            // 
-            // createBtn
-            // 
-            this.createBtn.BackColor = System.Drawing.Color.LawnGreen;
-            this.createBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.createBtn.Location = new System.Drawing.Point(314, 157);
-            this.createBtn.Name = "createBtn";
-            this.createBtn.Size = new System.Drawing.Size(82, 29);
-            this.createBtn.TabIndex = 20;
-            this.createBtn.Text = "&Create";
-            this.toolTip.SetToolTip(this.createBtn, "Creates  \'New Order\' sheet.");
-            this.createBtn.UseVisualStyleBackColor = false;
-            this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
             // 
             // UserControl
             // 

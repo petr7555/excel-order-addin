@@ -188,6 +188,7 @@ namespace ExcelOrderAddIn
             Properties.Settings.Default.Table1 = (table1ComboBox.SelectedItem as WorksheetItem).Name;
 
             RefreshIdColComboBox(table1ComboBox, idCol1ComboBox, Properties.Settings.Default.IdCol1);
+            Validate();
         }
 
         private void table2ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -195,6 +196,7 @@ namespace ExcelOrderAddIn
             Properties.Settings.Default.Table2 = (table2ComboBox.SelectedItem as WorksheetItem).Name;
 
             RefreshIdColComboBox(table2ComboBox, idCol2ComboBox, Properties.Settings.Default.IdCol2);
+            Validate();
         }
 
         private void table3ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -202,6 +204,7 @@ namespace ExcelOrderAddIn
             Properties.Settings.Default.Table3 = (table3ComboBox.SelectedItem as WorksheetItem).Name;
 
             RefreshIdColComboBox(table3ComboBox, idCol3ComboBox, Properties.Settings.Default.IdCol3);
+            Validate();
         }
 
         private void RefreshIdColComboBox(ComboBox tableComboBox, ComboBox idColComboBox, string preferredIdColumn)
@@ -240,16 +243,19 @@ namespace ExcelOrderAddIn
         private void idCol1ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.IdCol1 = idCol1ComboBox.SelectedItem as string;
+            Validate();
         }
 
         private void idCol2ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.IdCol2 = idCol2ComboBox.SelectedItem as string;
+            Validate();
         }
 
         private void idCol3ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.IdCol3 = idCol3ComboBox.SelectedItem as string;
+            Validate();
         }
 
         private void selectImgFolderBtn_Click(object sender, EventArgs e)

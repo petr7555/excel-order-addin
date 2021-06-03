@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn
@@ -29,14 +30,22 @@ namespace ExcelOrderAddIn
 
         public static IList<string> GetColumnNames(this Excel.Worksheet worksheet)
         {
-            var i = 1;
-            object column;
-            var result = new List<string>();
-            while ((column = worksheet.Cells[1, i++].Value2) != null)
+            try
             {
-                result.Add(column.ToString());
+                  var i = 1;
+                object column;
+                var result = new List<string>();
+                while ((column = worksheet.Cells[1, i++].Value2) != null)
+                {
+                    result.Add(column.ToString());
+                }
+                return result;
+            } catch (System.Runtime.InteropServices.COMException e)
+            {
+                MessageBox.Show($"The selected worksheet does not exist anymore, please refresh.", "Refresh!");
+                return new List<string>();
             }
-            return result;
+           
         }
     }
 }
