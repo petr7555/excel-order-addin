@@ -17,8 +17,7 @@ namespace ExcelOrderAddIn
         private const int ImgColHeight = 76;
         private const int ImgColWidth = 13;
         private const int ImgSize = 72; // = 96 pixels
-
-
+        private const string PriceFormat = "#,###,###.00 €";
         private IList<string> Columns;
         public object[][] Data = new object[0][];
         private string IdCol;
@@ -101,36 +100,85 @@ namespace ExcelOrderAddIn
             var dataRange = worksheet.Range[dataStartCell, dataEndCell];
             dataRange.Value2 = Data.ToExcelMultidimArray();
 
+            // Set row height so that images fit
             dataRange.RowHeight = ImgColHeight;
 
+            // Autofit all columns
             var usedRange = worksheet.UsedRange;
             usedRange.Columns.AutoFit();
 
+            // Make 'Image' column wider
             worksheet.Columns[1].ColumnWidth = ImgColWidth;
+
+            // Format 'Order'
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.INPUT, "Order");
+
+            // Format 'Total order'
+            FormatTotalOrder(worksheet, topOffset);
+
+            // Format 'Stock comming'
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Stock comming");
+
+            // Format 'Note for stock'
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Note for stock");
+
+        }
+
+        private void FormatTotalOrder(Excel.Worksheet worksheet, int topOffset)
+        {
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.CALCULATION, "Total order");
+            // 
+            var totalOrderIndex = Columns.IndexOf("Total order") + 1;
+            var priceIndex = Columns.IndexOf("EXW CZ") + 1;
+            var orderIndex = Columns.IndexOf("Order") + 1;
+            
+            for (int i = 0; i < NRows; i++)
+            {
+                var row = topOffset + 2 + i;
+                worksheet.Cells[i + 2 + topOffset, totalOrderIndex].Formula =
+                $"={(priceIndex).ToLetter()}{row}*" +
+                $"{(orderIndex).ToLetter()}{row}";
+            }
+            var range = GetColumnRange(worksheet, topOffset, "Total order");
+            range.NumberFormat = PriceFormat;
+        }
+
+        private void ApplyStyleToColumn(Excel.Worksheet worksheet, int topOffset, Styling.Style style, string columnName)
+        {
+            var range = GetColumnRange(worksheet, topOffset, columnName);
+            Styling.Apply(range, style);
+        }
+
+        private Excel.Range GetColumnRange(Excel.Worksheet worksheet, int topOffset, string columnName)
+        {
+            var colIndex = Columns.IndexOf(columnName) + 1;
+            var startCell = worksheet.Cells[2 + topOffset, colIndex] as Excel.Range;
+            var endCell = worksheet.Cells[NRows + 1 + topOffset, colIndex] as Excel.Range;
+            return worksheet.Range[startCell, endCell]; ;
         }
 
         internal void PrintTotalPriceTable(Excel.Worksheet worksheet, int topOffset)
         {
-            // Index of 'Order' column in Excel's 'starting from 1 order'
+            // Index of 'Order' column in Excel's 'starting from 1 system'
             var orderColIndex = Columns.IndexOf("Order") + 1;
 
-            var titleRange = worksheet.Cells[1, orderColIndex - 1];
-            titleRange.Value2 = "Total order";
-            Styling.Apply(titleRange, Styling.Style.HEADER);
+            var titleCell = worksheet.Cells[1, orderColIndex - 1];
+            titleCell.Value2 = "Total order";
+            Styling.Apply(titleCell, Styling.Style.HEADER);
 
-            var unitsRange = worksheet.Cells[1, orderColIndex];
-            Styling.Apply(unitsRange, Styling.Style.CALCULATION);
-            unitsRange.Formula = $"=SUM(" +
+            var unitsCell = worksheet.Cells[1, orderColIndex];
+            Styling.Apply(unitsCell, Styling.Style.CALCULATION);
+            unitsCell.Formula = $"=SUM(" +
                 $"{orderColIndex.ToLetter()}{topOffset + 2}:" +
-                $"{orderColIndex.ToLetter()}{topOffset + 1 + Data.GetLength(0)})";
+                $"{orderColIndex.ToLetter()}{topOffset + 1 + NRows})";
 
             // Assumes that 'Total order' follows directly after 'Order'
-            var totalPriceRange = worksheet.Cells[1, orderColIndex + 1];
-            Styling.Apply(totalPriceRange, Styling.Style.CALCULATION);
-            totalPriceRange.NumberFormat = "#,###,###.00 €";
-            totalPriceRange.Formula = $"=SUM(" +
+            var totalPriceCell = worksheet.Cells[1, orderColIndex + 1];
+            Styling.Apply(totalPriceCell, Styling.Style.CALCULATION);
+            totalPriceCell.NumberFormat = PriceFormat;
+            totalPriceCell.Formula = $"=SUM(" +
                 $"{(orderColIndex + 1).ToLetter()}{topOffset + 2}:" +
-                $"{(orderColIndex + 1).ToLetter()}{topOffset + 1 + Data.GetLength(0)})";
+                $"{(orderColIndex + 1).ToLetter()}{topOffset + 1 + NRows})";
         }
 
         /**

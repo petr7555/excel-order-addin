@@ -84,6 +84,8 @@ namespace ExcelOrderAddIn
             if (ValidateChildren(ValidationConstraints.Enabled))
             {
 
+                Globals.ThisAddIn.Application.ScreenUpdating = false;
+
                 var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
                 var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
                 var table3 = Table.FromComboBoxes(table3ComboBox, idCol3ComboBox);
@@ -105,6 +107,8 @@ namespace ExcelOrderAddIn
                 joined.PrintToWorksheet(newWorksheet, topOffset);
 
                 joined.InsertImages(newWorksheet, topOffset, imgFolderTextBox.Text);
+
+                Globals.ThisAddIn.Application.ScreenUpdating = true;
 
                 MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
             }
