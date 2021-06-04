@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -15,7 +11,7 @@ namespace ExcelOrderAddIn
         {
             var n = 1;
             while (worksheet.Cells[1, n++].Value2 != null)
-            {            }
+            { }
             return n - 2;
         }
 
@@ -36,29 +32,28 @@ namespace ExcelOrderAddIn
                 return new List<string>();
             }
 
-                var i = 1;
-                object column;
-                var result = new List<string>();
-                while ((column = worksheet.Cells[1, i++].Value2) != null)
-                {
-                    result.Add(column.ToString());
-                }
-                return result;
+            var i = 1;
+            object column;
+            var result = new List<string>();
+            while ((column = worksheet.Cells[1, i++].Value2) != null)
+            {
+                result.Add(column.ToString());
+            }
+            return result;
         }
 
         public static bool Exists(this Excel.Worksheet worksheet)
         {
-            //try
-                //{
+            try
+            {
                 var name = worksheet.Name;
-                //}
-                //catch (System.Runtime.InteropServices.COMException e)
-                //{
-                //return false;
-               
-                //}
-            return true;
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                return false;
 
+            }
+            return true;
         }
     }
 }
