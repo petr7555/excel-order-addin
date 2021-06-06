@@ -1,8 +1,10 @@
-﻿using Microsoft.Office.Tools.Ribbon;
+﻿// ReSharper disable once RedundantUsingDirective
+using Microsoft.Office.Tools.Ribbon;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public partial class Ribbon
     {
         private void openSidebarBtn_Click(object sender, RibbonControlEventArgs e)

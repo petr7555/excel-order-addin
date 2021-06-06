@@ -32,7 +32,7 @@ namespace ExcelOrderAddIn
         {
             if (!worksheet.Exists())
             {
-                MessageBox.Show($"The selected worksheet does not exist anymore, please refresh.", "Refresh!");
+                MessageBox.Show("The selected worksheet does not exist anymore, please refresh.", "Refresh!");
                 return new List<string>();
             }
 
@@ -51,7 +51,7 @@ namespace ExcelOrderAddIn
         {
             try
             {
-                var name = worksheet.Name;
+                var unused = worksheet.Name;
             }
             catch (COMException)
             {

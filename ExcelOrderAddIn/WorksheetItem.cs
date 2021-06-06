@@ -2,10 +2,10 @@
 
 namespace ExcelOrderAddIn
 {
-    class WorksheetItem
+    internal class WorksheetItem
     {
-        public Excel.Worksheet Worksheet { get; set; }
-        public string Name { get; private set; }
+        public Excel.Worksheet Worksheet { get; }
+        public string Name { get; }
 
         public WorksheetItem(Excel.Worksheet worksheet)
         {

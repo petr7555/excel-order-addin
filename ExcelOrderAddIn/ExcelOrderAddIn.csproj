@@ -185,7 +185,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Row.cs" />
     <Compile Include="Styling.cs" />
     <Compile Include="Table.cs" />
     <Compile Include="UserControl.cs">

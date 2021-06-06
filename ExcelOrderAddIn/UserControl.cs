@@ -10,16 +10,13 @@ namespace ExcelOrderAddIn
 {
     public partial class UserControl : System.Windows.Forms.UserControl
     {
-        private IEnumerable<WorksheetItem> WorksheetItems;
+        private IEnumerable<WorksheetItem> _worksheetItems;
 
         public UserControl()
         {
             InitializeComponent();
 
             RefreshItems();
-            // Was too slow.
-            //Globals.ThisAddIn.Application.SheetChange += Application_SheetChange;
-            //Globals.ThisAddIn.Application.SheetActivate += Application_SheetActivate;
 
             InitializeImageFolderPicker();
         }
@@ -30,26 +27,16 @@ namespace ExcelOrderAddIn
             folderBrowserDialog.SelectedPath = Settings.Default.ImgFolder;
         }
 
-        private void Application_SheetActivate(object Sh)
-        {
-            RefreshItems();
-        }
-
-        private void Application_SheetChange(object Sh, Excel.Range Target)
-        {
-            RefreshItems();
-        }
-
         private void RefreshItems()
         {
-            WorksheetItems = GetWorksheetItems();
+            _worksheetItems = GetWorksheetItems();
 
             RefreshTableComboBox(table1ComboBox, Settings.Default.Table1, 0);
             RefreshTableComboBox(table2ComboBox, Settings.Default.Table2, 1);
             RefreshTableComboBox(table3ComboBox, Settings.Default.Table3, 2);
         }
 
-        private IEnumerable<WorksheetItem> GetWorksheetItems()
+        private static IEnumerable<WorksheetItem> GetWorksheetItems()
         {
             foreach (Excel.Worksheet worksheet in Globals.ThisAddIn.Application.Worksheets)
             {
@@ -60,7 +47,7 @@ namespace ExcelOrderAddIn
         private void RefreshTableComboBox(ComboBox comboBox, string preferredTable, int preferredIndex)
         {
             comboBox.Items.Clear();
-            comboBox.Items.AddRange(WorksheetItems.ToArray());
+            comboBox.Items.AddRange(_worksheetItems.ToArray());
 
             var allWorksheetsNames = comboBox.Items.OfType<WorksheetItem>().Select(item => item.Name);
             if (allWorksheetsNames.Contains(preferredTable))
@@ -85,42 +72,40 @@ namespace ExcelOrderAddIn
          */
         private void createBtn_Click(object sender, EventArgs e)
         {
-            if (ValidateChildren(ValidationConstraints.Enabled))
-            {
-                Globals.ThisAddIn.Application.ScreenUpdating = false;
+            if (!ValidateChildren(ValidationConstraints.Enabled)) return;
+            
+            Globals.ThisAddIn.Application.ScreenUpdating = false;
 
-                var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
-                var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
-                var table3 = Table.FromComboBoxes(table3ComboBox, idCol3ComboBox);
+            var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
+            var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
+            var table3 = Table.FromComboBoxes(table3ComboBox, idCol3ComboBox);
 
-                var newWorksheet = CreateNewWorksheet();
+            var newWorksheet = CreateNewWorksheet();
 
-                var joined = table1.Join(table2).Join(table3);
+            var joined = table1.Join(table2).Join(table3);
 
-                joined.RemoveUnavailableProducts();
+            joined.RemoveUnavailableProducts();
 
-                joined.InsertColumns();
+            joined.InsertColumns();
 
-                joined.RenameColumns();
+            joined.RenameColumns();
 
-                joined.SelectColumns();
+            joined.SelectColumns();
 
-                int topOffset = 2;
-                joined.PrintTotalPriceTable(newWorksheet, topOffset);
-                joined.PrintToWorksheet(newWorksheet, topOffset);
+            int topOffset = 2;
+            joined.PrintTotalPriceTable(newWorksheet, topOffset);
+            joined.PrintToWorksheet(newWorksheet, topOffset);
 
-                joined.InsertImages(newWorksheet, topOffset, imgFolderTextBox.Text);
+            joined.InsertImages(newWorksheet, topOffset, imgFolderTextBox.Text);
 
-                Globals.ThisAddIn.Application.ScreenUpdating = true;
+            Globals.ThisAddIn.Application.ScreenUpdating = true;
 
-                MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
-            }
+            MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
         }
 
-        public static Excel.Worksheet CreateNewWorksheet()
+        private static Excel.Worksheet CreateNewWorksheet()
         {
-            Excel.Worksheet newWorksheet;
-            newWorksheet = Globals.ThisAddIn.Application.Worksheets.Add();
+            var newWorksheet = Globals.ThisAddIn.Application.Worksheets.Add();
             var newName = FindNewName();
             newWorksheet.Name = newName;
             return newWorksheet;
@@ -206,7 +191,7 @@ namespace ExcelOrderAddIn
             Validate();
         }
 
-        private void RefreshIdColComboBox(ComboBox tableComboBox, ComboBox idColComboBox, string preferredIdColumn)
+        private static void RefreshIdColComboBox(ComboBox tableComboBox, ComboBox idColComboBox, string preferredIdColumn)
         {
             idColComboBox.Items.Clear();
             var items = (tableComboBox.SelectedItem as WorksheetItem).Worksheet.GetColumnNames();
@@ -225,7 +210,7 @@ namespace ExcelOrderAddIn
 
         private void deleteGeneratedSheetsBtn_Click(object sender, EventArgs e)
         {
-            var sheetName = "New Order";
+            const string sheetName = "New Order";
             var generatedSheets = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>()
                 .Where(ws => ws.Name.StartsWith(sheetName));
             var count = generatedSheets.Count();
@@ -261,11 +246,10 @@ namespace ExcelOrderAddIn
 
         private void selectImgFolderBtn_Click(object sender, EventArgs e)
         {
-            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-            {
-                imgFolderTextBox.Text = folderBrowserDialog.SelectedPath;
-                Settings.Default.ImgFolder = folderBrowserDialog.SelectedPath;
-            }
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
+            
+            imgFolderTextBox.Text = folderBrowserDialog.SelectedPath;
+            Settings.Default.ImgFolder = folderBrowserDialog.SelectedPath;
         }
 
         private void refreshBtn_Click(object sender, EventArgs e)
