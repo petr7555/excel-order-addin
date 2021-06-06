@@ -268,6 +268,8 @@ namespace ExcelOrderAddIn
             this.refreshBtn.TabIndex = 17;
             this.refreshBtn.Text = "&Refresh";
             this.refreshBtn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTip.SetToolTip(this.refreshBtn, "Updates available tables in combo boxes. Click this when you create or delete a s" +
+        "heet.");
             this.refreshBtn.UseVisualStyleBackColor = false;
             this.refreshBtn.Click += new System.EventHandler(this.refreshBtn_Click);
             // 
