@@ -91,26 +91,20 @@ namespace ExcelOrderAddIn.Model
             }
 
             // insert header
-            var headerStartCell = worksheet.Cells[1 + topOffset, 1] as Excel.Range;
-            var headerEndCell = worksheet.Cells[1 + topOffset, NCols] as Excel.Range;
+            var headerStartCell = worksheet.Cells[topOffset + 1, 1] as Excel.Range;
+            var headerEndCell = worksheet.Cells[topOffset + 1, NCols] as Excel.Range;
             var headerRange = worksheet.Range[headerStartCell, headerEndCell];
             headerRange.Value2 = _columns.ToExcelMultidimArray();
             Styling.Apply(headerRange, Styling.Style.Header);
 
-            if (NRows == 0)
-            {
-                return;
-            }
-
             // insert data
-            var dataStartCell = worksheet.Cells[2 + topOffset, 1] as Excel.Range;
-            var dataEndCell = worksheet.Cells[NRows + 1 + topOffset, NCols] as Excel.Range;
+            var dataStartCell = worksheet.Cells[topOffset + 2, 1] as Excel.Range;
+            var dataEndCell = worksheet.Cells[topOffset + 1 + Math.Max(NRows, 1), NCols] as Excel.Range;
             var dataRange = worksheet.Range[dataStartCell, dataEndCell];
             dataRange.Value2 = Data.ToExcelMultidimArray();
 
             // Auto-fit all columns
-            var usedRange = worksheet.UsedRange;
-            usedRange.Columns.AutoFit();
+            worksheet.UsedRange.Columns.AutoFit();
 
             // Set row height so that images fit
             dataRange.RowHeight = ImgColHeight;
@@ -252,8 +246,8 @@ namespace ExcelOrderAddIn.Model
         private Excel.Range GetColumnRange(Excel.Worksheet worksheet, int topOffset, string columnName)
         {
             var colIndex = _columns.IndexOf(columnName) + 1;
-            var startCell = worksheet.Cells[2 + topOffset, colIndex] as Excel.Range;
-            var endCell = worksheet.Cells[NRows + 1 + topOffset, colIndex] as Excel.Range;
+            var startCell = worksheet.Cells[topOffset + 2, colIndex] as Excel.Range;
+            var endCell = worksheet.Cells[topOffset + 1 + Math.Max(NRows, 1), colIndex] as Excel.Range;
             return worksheet.Range[startCell, endCell];
         }
 

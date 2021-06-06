@@ -59,10 +59,10 @@ namespace ExcelOrderAddIn
             }
 
             // TODO zjistit, co je pohodlnější
-            //if (comboBox.SelectedIndex == -1)
-            //{
-            //    comboBox.SelectedIndex = Math.Min(preferredIndex, comboBox.Items.Count - 1);
-            //}
+            if (comboBox.SelectedIndex == -1)
+            {
+                comboBox.SelectedIndex = Math.Min(preferredIndex, comboBox.Items.Count - 1);
+            }
         }
 
         /**
@@ -74,7 +74,7 @@ namespace ExcelOrderAddIn
         {
             if (!ValidateChildren(ValidationConstraints.Enabled)) return;
             
-            Globals.ThisAddIn.Application.ScreenUpdating = false;
+            //Globals.ThisAddIn.Application.ScreenUpdating = false;
 
             var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
             var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
