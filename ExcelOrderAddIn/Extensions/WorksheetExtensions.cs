@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
-namespace ExcelOrderAddIn
+namespace ExcelOrderAddIn.Extensions
 {
     public static class WorksheetExtensions
     {

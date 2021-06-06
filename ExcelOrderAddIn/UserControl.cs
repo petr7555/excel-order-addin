@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+// ReSharper disable once RedundantUsingDirective
+using ExcelOrderAddIn.Extensions;
+using ExcelOrderAddIn.Model;
 using ExcelOrderAddIn.Properties;
 using Excel = Microsoft.Office.Interop.Excel;
 

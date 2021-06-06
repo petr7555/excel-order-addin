@@ -1,6 +1,5 @@
 ﻿// ReSharper disable once RedundantUsingDirective
 using Microsoft.Office.Tools.Ribbon;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn
 {

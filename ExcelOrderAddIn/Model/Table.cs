@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ExcelOrderAddIn.Extensions;
 using Excel = Microsoft.Office.Interop.Excel;
 
-
-namespace ExcelOrderAddIn
+namespace ExcelOrderAddIn.Model
 {
     internal class Table
     {

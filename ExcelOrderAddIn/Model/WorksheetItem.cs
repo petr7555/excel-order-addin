@@ -1,6 +1,6 @@
 ﻿using Excel = Microsoft.Office.Interop.Excel;
 
-namespace ExcelOrderAddIn
+namespace ExcelOrderAddIn.Model
 {
     internal class WorksheetItem
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExcelOrderAddIn
+namespace ExcelOrderAddIn.Extensions
 {
     public static class IntExtensions
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ExcelOrderAddIn
+namespace ExcelOrderAddIn.Extensions
 {
     public static class ArrayExtensions
     {
