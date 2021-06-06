@@ -1,64 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn
 {
     public static class Styling
     {
-
-        //private static readonly Color PURPLE = ColorTranslator.FromHtml("#3F3F76");
-        //private static readonly Color ORANGE = ColorTranslator.FromHtml("#FFCC99");
-        private static readonly Color GREY = ColorTranslator.FromHtml("#C0C0C0");
-        private static readonly Color BLACK = ColorTranslator.FromHtml("#000000");
-        private static readonly Color WHITE = ColorTranslator.FromHtml("#FFFFFF");
-        private static readonly Color SALMON = ColorTranslator.FromHtml("#FCE4D6");
-        private static readonly Color YELLOW = ColorTranslator.FromHtml("#FFF2CC");
-        private static readonly Color RED = ColorTranslator.FromHtml("#FF0000");
-
+        private static readonly Color Grey = ColorTranslator.FromHtml("#C0C0C0");
+        private static readonly Color Salmon = ColorTranslator.FromHtml("#FCE4D6");
+        private static readonly Color Yellow = ColorTranslator.FromHtml("#FFF2CC");
+        private static readonly Color Red = ColorTranslator.FromHtml("#FF0000");
 
         public enum Style
         {
-            CALCULATION, // Exists
-            INPUT, // Exists
-            HEADER,
-            SALMON_BOLD,
-            YELLOW,
-            BOLD_TEXT,
-            RED_BOLD_TEXT,
-            RED_BOLD_HEADER_TEXT,
+            Calculation, // Exists in Excel by default
+            Input, // Exists in Excel by default
+            Header,
+            SalmonBold,
+            Yellow,
+            BoldText,
+            RedBoldText,
+            RedBoldHeaderText,
         }
 
         public static void Apply(Excel.Range range, Style style)
         {
             switch (style)
             {
-                case Style.CALCULATION:
+                case Style.Calculation:
                     ApplyCalculation(range);
                     break;
-                case Style.INPUT:
+                case Style.Input:
                     ApplyInput(range);
                     break;
-                case Style.HEADER:
+                case Style.Header:
                     ApplyHeader(range);
                     break;
-                case Style.SALMON_BOLD:
+                case Style.SalmonBold:
                     ApplySalmonBold(range);
                     break;
-                case Style.YELLOW:
+                case Style.Yellow:
                     ApplyYellow(range);
                     break;
-                case Style.BOLD_TEXT:
+                case Style.BoldText:
                     ApplyBoldText(range);
                     break;
-                case Style.RED_BOLD_TEXT:
+                case Style.RedBoldText:
                     ApplyRedBoldText(range);
                     break;
-                case Style.RED_BOLD_HEADER_TEXT:
+                case Style.RedBoldHeaderText:
                     ApplyRedBoldHeaderText(range);
                     break;
                 default:
@@ -79,33 +70,33 @@ namespace ExcelOrderAddIn
 
         private static void ApplyHeader(Excel.Range range)
         {
-            var styleName = "Header_addin";
+            const string styleName = "Header_addin";
             new StyleBuilder(styleName)
-                .WithBackgroundColor(GREY)
+                .WithBackgroundColor(Grey)
                 .WithBold();
             range.Style = styleName;
         }
 
         private static void ApplySalmonBold(Excel.Range range)
         {
-            var styleName = "SalmonBold_addin";
+            const string styleName = "SalmonBold_addin";
             new StyleBuilder(styleName)
-                .WithBackgroundColor(SALMON)
+                .WithBackgroundColor(Salmon)
                 .WithBold();
             range.Style = styleName;
         }
 
         private static void ApplyYellow(Excel.Range range)
         {
-            var styleName = "Yellow_addin";
+            const string styleName = "Yellow_addin";
             new StyleBuilder(styleName)
-                .WithBackgroundColor(YELLOW);
+                .WithBackgroundColor(Yellow);
             range.Style = styleName;
         }
 
         private static void ApplyBoldText(Excel.Range range)
         {
-            var styleName = "BoldText_addin";
+            const string styleName = "BoldText_addin";
             new StyleBuilder(styleName)
                 .WithBold();
             range.Style = styleName;
@@ -113,19 +104,19 @@ namespace ExcelOrderAddIn
 
         private static void ApplyRedBoldText(Excel.Range range)
         {
-            var styleName = "RedBoldText_addin";
+            const string styleName = "RedBoldText_addin";
             new StyleBuilder(styleName)
-                .WithTextColor(RED)
+                .WithTextColor(Red)
                 .WithBold();
             range.Style = styleName;
         }
 
         private static void ApplyRedBoldHeaderText(Excel.Range range)
         {
-            var styleName = "RedBoldHeaderText_addin";
+            const string styleName = "RedBoldHeaderText_addin";
             new StyleBuilder(styleName)
-                .WithBackgroundColor(GREY)
-                .WithTextColor(RED)
+                .WithBackgroundColor(Grey)
+                .WithTextColor(Red)
                 .WithBold();
             range.Style = styleName;
         }
@@ -141,7 +132,8 @@ namespace ExcelOrderAddIn
                 {
                     Style = Globals.ThisAddIn.Application.ActiveWorkbook.Styles.Add(styleName);
                 }
-                catch (System.Runtime.InteropServices.COMException e) when (e.Message == "Add method of Styles class failed")
+                catch (COMException e) when (e.Message ==
+                                             "Add method of Styles class failed")
                 {
                 }
             }
@@ -152,6 +144,7 @@ namespace ExcelOrderAddIn
                 {
                     Style.Font.Name = fontName;
                 }
+
                 return this;
             }
 
@@ -161,6 +154,7 @@ namespace ExcelOrderAddIn
                 {
                     Style.Font.Size = fontSize;
                 }
+
                 return this;
             }
 
@@ -170,6 +164,7 @@ namespace ExcelOrderAddIn
                 {
                     Style.Font.Bold = true;
                 }
+
                 return this;
             }
 
@@ -179,16 +174,16 @@ namespace ExcelOrderAddIn
                 {
                     Style.Font.Color = textColor;
                 }
+
                 return this;
             }
 
             public StyleBuilder WithBackgroundColor(Color backgroundColor)
             {
-                if (Style != null)
-                {
-                    Style.Interior.Color = backgroundColor;
-                    Style.Interior.Pattern = Excel.XlPattern.xlPatternSolid;
-                }
+                if (Style == null) return this;
+                Style.Interior.Color = backgroundColor;
+                Style.Interior.Pattern = Excel.XlPattern.xlPatternSolid;
+
                 return this;
             }
         }

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -11,7 +10,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn
 {
-    class Table
+    internal class Table
     {
         // TODO Could be configurable
         private const int ImgColHeight = 76;
@@ -20,7 +19,9 @@ namespace ExcelOrderAddIn
 
         // It is good to figure these out by recording VB macro in Excel.
         // Quotes are escaped by doubling them both in VB and regex.
-        private const string AccountingFormat = @"_([$€-x-euro2] * #,##0.00_);_([$€-x-euro2] * (#,##0.00);_([$€-x-euro2] * ""-""??_);_(@_)";
+        private const string AccountingFormat =
+            @"_([$€-x-euro2] * #,##0.00_);_([$€-x-euro2] * (#,##0.00);_([$€-x-euro2] * ""-""??_);_(@_)";
+
         private const string IntegerFormat = "0";
         private const string TextFormat = "@";
 
@@ -28,10 +29,20 @@ namespace ExcelOrderAddIn
         public object[][] Data = new object[0][];
         private string IdCol;
 
-        private int NCols { get => Columns.Count; }
-        private int NRows { get => Data.Count(); }
+        private int NCols
+        {
+            get => Columns.Count;
+        }
 
-        private int IdColIdx { get => Columns.IndexOf(IdCol); }
+        private int NRows
+        {
+            get => Data.Count();
+        }
+
+        private int IdColIdx
+        {
+            get => Columns.IndexOf(IdCol);
+        }
 
         private Table()
         {
@@ -52,9 +63,9 @@ namespace ExcelOrderAddIn
             // Join data on id columns, merge all columns (including the id column)
             var joinedData = Data
                 .Join(rightTable.Data,
-                leftRow => leftRow.ElementAt(leftIdColIdx),
-                rightRow => rightRow.ElementAt(rightIdColIdx),
-                (leftRow, rightRow) => leftRow.Concat(rightRow));
+                    leftRow => leftRow.ElementAt(leftIdColIdx),
+                    rightRow => rightRow.ElementAt(rightIdColIdx),
+                    (leftRow, rightRow) => leftRow.Concat(rightRow));
 
             // Columns in the right table that are already in the left table
             // Should be removed from the resulting table
@@ -92,7 +103,7 @@ namespace ExcelOrderAddIn
             var headerEndCell = worksheet.Cells[1 + topOffset, NCols] as Excel.Range;
             var headerRange = worksheet.Range[headerStartCell, headerEndCell];
             headerRange.Value2 = Columns.ToExcelMultidimArray();
-            Styling.Apply(headerRange, Styling.Style.HEADER);
+            Styling.Apply(headerRange, Styling.Style.Header);
 
             if (NRows == 0)
             {
@@ -136,19 +147,19 @@ namespace ExcelOrderAddIn
 
         private void FormatWillBeAvailableColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Will be available");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, "Will be available");
             FormatColumnAsInteger(worksheet, topOffset, "Stock comming");
         }
 
         private void FormatInStockColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.SALMON_BOLD, "In stock");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.SalmonBold, "In stock");
             FormatColumnAsInteger(worksheet, topOffset, "In stock");
         }
 
         private void FormatRRPColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.BOLD_TEXT, "RRP");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.BoldText, "RRP");
             FormatColumnAsAccounting(worksheet, topOffset, "RRP");
         }
 
@@ -159,11 +170,11 @@ namespace ExcelOrderAddIn
 
         private void FormatNewColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.RED_BOLD_TEXT, "NEW");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.RedBoldText, "NEW");
 
             var colIndex = Columns.IndexOf("NEW") + 1;
             var headerCell = worksheet.Cells[topOffset + 1, colIndex];
-            Styling.Apply(headerCell, Styling.Style.RED_BOLD_HEADER_TEXT);
+            Styling.Apply(headerCell, Styling.Style.RedBoldHeaderText);
         }
 
         private void FormatColliColumn(Excel.Worksheet worksheet, int topOffset)
@@ -173,13 +184,13 @@ namespace ExcelOrderAddIn
 
         private void FormatNoteForStockColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Note for stock");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, "Note for stock");
             FormatColumnAsText(worksheet, topOffset, "Note for stock");
         }
 
         private void FormatStockComingColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.YELLOW, "Stock comming");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, "Stock comming");
             FormatColumnAsInteger(worksheet, topOffset, "Stock comming");
         }
 
@@ -191,7 +202,7 @@ namespace ExcelOrderAddIn
 
         private void FormatOrderColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.INPUT, "Order");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Input, "Order");
         }
 
         private void FormatEANColumn(Excel.Worksheet worksheet, int topOffset)
@@ -201,7 +212,7 @@ namespace ExcelOrderAddIn
 
         private void FormatTotalOrderColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.CALCULATION, "Total order");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Calculation, "Total order");
             InsertTotalOrderFormula(worksheet, topOffset);
             FormatColumnAsAccounting(worksheet, topOffset, "Total order");
         }
@@ -234,8 +245,8 @@ namespace ExcelOrderAddIn
             {
                 var row = topOffset + 2 + i;
                 worksheet.Cells[row, totalOrderIndex].Formula =
-                $"={(priceIndex).ToLetter()}{row}*" +
-                $"{(orderIndex).ToLetter()}{row}";
+                    $"={(priceIndex).ToLetter()}{row}*" +
+                    $"{(orderIndex).ToLetter()}{row}";
             });
 
             //var nBatches = 16;
@@ -260,7 +271,8 @@ namespace ExcelOrderAddIn
             //});
         }
 
-        private void ApplyStyleToColumn(Excel.Worksheet worksheet, int topOffset, Styling.Style style, string columnName)
+        private void ApplyStyleToColumn(Excel.Worksheet worksheet, int topOffset, Styling.Style style,
+            string columnName)
         {
             var range = GetColumnRange(worksheet, topOffset, columnName);
             Styling.Apply(range, style);
@@ -271,7 +283,8 @@ namespace ExcelOrderAddIn
             var colIndex = Columns.IndexOf(columnName) + 1;
             var startCell = worksheet.Cells[2 + topOffset, colIndex] as Excel.Range;
             var endCell = worksheet.Cells[NRows + 1 + topOffset, colIndex] as Excel.Range;
-            return worksheet.Range[startCell, endCell]; ;
+            return worksheet.Range[startCell, endCell];
+            ;
         }
 
         internal void PrintTotalPriceTable(Excel.Worksheet worksheet, int topOffset)
@@ -281,21 +294,21 @@ namespace ExcelOrderAddIn
 
             var titleCell = worksheet.Cells[1, orderColIndex - 1];
             titleCell.Value2 = "Total order";
-            Styling.Apply(titleCell, Styling.Style.HEADER);
+            Styling.Apply(titleCell, Styling.Style.Header);
 
             var unitsCell = worksheet.Cells[1, orderColIndex];
-            Styling.Apply(unitsCell, Styling.Style.CALCULATION);
+            Styling.Apply(unitsCell, Styling.Style.Calculation);
             unitsCell.Formula = $"=SUM(" +
-                $"{orderColIndex.ToLetter()}{topOffset + 2}:" +
-                $"{orderColIndex.ToLetter()}{topOffset + 1 + NRows})";
+                                $"{orderColIndex.ToLetter()}{topOffset + 2}:" +
+                                $"{orderColIndex.ToLetter()}{topOffset + 1 + NRows})";
 
             // Assumes that 'Total order' follows directly after 'Order'
             var totalPriceCell = worksheet.Cells[1, orderColIndex + 1];
-            Styling.Apply(totalPriceCell, Styling.Style.CALCULATION);
+            Styling.Apply(totalPriceCell, Styling.Style.Calculation);
             totalPriceCell.NumberFormat = AccountingFormat;
             totalPriceCell.Formula = $"=SUM(" +
-                $"{(orderColIndex + 1).ToLetter()}{topOffset + 2}:" +
-                $"{(orderColIndex + 1).ToLetter()}{topOffset + 1 + NRows})";
+                                     $"{(orderColIndex + 1).ToLetter()}{topOffset + 2}:" +
+                                     $"{(orderColIndex + 1).ToLetter()}{topOffset + 1 + NRows})";
 
             AddBorder(worksheet.Range[titleCell, totalPriceCell]);
         }
@@ -315,11 +328,14 @@ namespace ExcelOrderAddIn
 
             var imgIdx = 0;
             foreach (var imgName in imgNames)
-            {           
+            {
                 if (FindImagePath(imgFolder, imgName, out var imgPath))
                 {
-                    worksheet.Shapes.AddPicture(imgPath, MsoTriState.msoFalse, MsoTriState.msoCTrue, 0, ((topOffset+1) * defaultRowSize) + (ImgColHeight * imgIdx) + (ImgColHeight-ImgSize) /2, ImgSize, ImgSize);
+                    worksheet.Shapes.AddPicture(imgPath, MsoTriState.msoFalse, MsoTriState.msoCTrue, 0,
+                        ((topOffset + 1) * defaultRowSize) + (ImgColHeight * imgIdx) + (ImgColHeight - ImgSize) / 2,
+                        ImgSize, ImgSize);
                 }
+
                 imgIdx++;
             }
         }
@@ -330,9 +346,9 @@ namespace ExcelOrderAddIn
          */
         private bool FindImagePath(string imgFolder, string imgName, out string imgPath)
         {
-            var extensions = new string[] { "jpg", "png", "jpeg" };
+            var extensions = new string[] {"jpg", "png", "jpeg"};
 
-            foreach(var extension in extensions)
+            foreach (var extension in extensions)
             {
                 var possiblePath = Path.Combine(imgFolder, $"{imgName}.{extension}");
                 if (File.Exists(possiblePath))
@@ -350,18 +366,18 @@ namespace ExcelOrderAddIn
         {
             Data = Data
                 .Where(row => !(
-                (Convert.ToInt32(row[Columns.IndexOf("Bude k dispozici")]) == 0 &&
-                (Convert.ToString(row[Columns.IndexOf("Údaj sklad 1")]).Contains("ukončeno") ||
-                Convert.ToString(row[Columns.IndexOf("Údaj sklad 1")]).Contains("doprodej")
-                )) || Convert.ToString(row[Columns.IndexOf("Údaj sklad 1")]).Contains("POS")
-
+                    (Convert.ToInt32(row[Columns.IndexOf("Bude k dispozici")]) == 0 &&
+                     (Convert.ToString(row[Columns.IndexOf("Údaj sklad 1")]).Contains("ukončeno") ||
+                      Convert.ToString(row[Columns.IndexOf("Údaj sklad 1")]).Contains("doprodej")
+                     )) || Convert.ToString(row[Columns.IndexOf("Údaj sklad 1")]).Contains("POS")
                 ))
                 .ToJaggedArray();
         }
 
         internal void SelectColumns()
         {
-            var resultColumns = new List<string>() { 
+            var resultColumns = new List<string>()
+            {
                 "Image",
                 "Product",
                 "Item",
@@ -397,20 +413,20 @@ namespace ExcelOrderAddIn
         internal void RenameColumns()
         {
             var dict = new Dictionary<string, string>
-                {
-                    { "Produkt", "Product" },
-                    { "Katalogové číslo", "Item" },
-                    { "Popis alternativní", "Description" },
-                {"Balení karton (ks)", "Colli (pcs in carton)" },
-                    {"Cena", "EXW CZ" },
-                { "Cena DMOC EUR", "RRP"},
-                     {"K dispozici", "In stock" },
-                 {"Bude k dispozici", "Stock comming" },
-               {"Výrobce", "Brand" },
-               {"Údaj 2", "Category" },
-               {"Údaj 1", "Product type" },
-               {"Země původu", "Country of origin" },
-                };
+            {
+                {"Produkt", "Product"},
+                {"Katalogové číslo", "Item"},
+                {"Popis alternativní", "Description"},
+                {"Balení karton (ks)", "Colli (pcs in carton)"},
+                {"Cena", "EXW CZ"},
+                {"Cena DMOC EUR", "RRP"},
+                {"K dispozici", "In stock"},
+                {"Bude k dispozici", "Stock comming"},
+                {"Výrobce", "Brand"},
+                {"Údaj 2", "Category"},
+                {"Údaj 1", "Product type"},
+                {"Země původu", "Country of origin"},
+            };
 
             Columns = Columns.Select(col =>
             {
@@ -418,6 +434,7 @@ namespace ExcelOrderAddIn
                 {
                     return dict[col];
                 }
+
                 return col;
             }).ToList();
         }
@@ -438,15 +455,14 @@ namespace ExcelOrderAddIn
          */
         private void InsertWillBeAvailableColumn()
         {
-
             Columns.Add("Will be available");
             Data = Data
-               .Select(row => row.Append(
-                   Convert.ToInt32(row[Columns.IndexOf("Bude k dispozici")]) +
-                   Convert.ToInt32(row[Columns.IndexOf("OBJEDNÁNO")]) -
-                   Convert.ToInt32(row[Columns.IndexOf("DODAT")])
-                   ))
-               .ToJaggedArray();
+                .Select(row => row.Append(
+                    Convert.ToInt32(row[Columns.IndexOf("Bude k dispozici")]) +
+                    Convert.ToInt32(row[Columns.IndexOf("OBJEDNÁNO")]) -
+                    Convert.ToInt32(row[Columns.IndexOf("DODAT")])
+                ))
+                .ToJaggedArray();
         }
 
         private void InsertThemeColumn()
@@ -483,8 +499,8 @@ namespace ExcelOrderAddIn
         {
             Columns.Add(columnName);
             Data = Data
-               .Select(row => row.Append(null))
-               .ToJaggedArray();
+                .Select(row => row.Append(null))
+                .ToJaggedArray();
         }
 
         //internal void FormatData(Excel.Worksheet worksheet)

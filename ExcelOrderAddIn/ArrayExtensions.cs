@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExcelOrderAddIn
 {
     public static class ArrayExtensions
     {
-        public static IEnumerable<T> GetColumn<T>(this T[,] array, int column)
+        private static IEnumerable<T> GetColumn<T>(this T[,] array, int column)
         {
-            for (int i = 0; i < array.GetLength(0); i++)
+            for (var i = 0; i < array.GetLength(0); i++)
             {
                 yield return array[i, column];
             }
@@ -18,27 +15,11 @@ namespace ExcelOrderAddIn
 
         public static IEnumerable<IEnumerable<T>> GetColumns<T>(this T[,] array)
         {
-            for (int i = 0; i < array.GetLength(1); i++)
+            for (var i = 0; i < array.GetLength(1); i++)
             {
                 yield return array.GetColumn(i);
             }
         }
-
-        //public static IEnumerable<IEnumerable<T>> FromExcelMultidimArray<T>(this T[,] array)
-        //{
-        //    for (int i = 0; i < array.GetLength(0); i++)
-        //    {
-        //        yield return GetRow(i);
-        //    }
-
-        //    IEnumerable<T> GetRow(int row)
-        //    {
-        //        for (int j = 0; j < array.GetLength(1); j++)
-        //        {
-        //            yield return array[row+1, j+1];
-        //        }
-        //    }
-        //}
 
         /**
          * Excel arrays start at 1.
@@ -50,13 +31,13 @@ namespace ExcelOrderAddIn
             var cols = array.GetLength(1);
 
             var result = new T[rows][];
-            for (int i = 0; i < rows; i++)
+            for (var i = 0; i < rows; i++)
             {
                 result[i] = new T[cols];
 
-                for (int j = 0; j < cols; j++)
+                for (var j = 0; j < cols; j++)
                 {
-                    result[i][j] = array[i+1, j+1];
+                    result[i][j] = array[i + 1, j + 1];
                 }
             }
 
@@ -79,9 +60,9 @@ namespace ExcelOrderAddIn
 
             var result = new T[rows, cols];
 
-            for (int i = 0; i < rows; i++)
+            for (var i = 0; i < rows; i++)
             {
-                for (int j = 0; j < cols; j++)
+                for (var j = 0; j < cols; j++)
                 {
                     result[i, j] = array[i][j];
                 }
@@ -96,9 +77,9 @@ namespace ExcelOrderAddIn
 
             var result = new T[1, cols];
 
-            for (int i = 0; i < cols; i++)
+            for (var i = 0; i < cols; i++)
             {
-              result[0, i] = array[i];
+                result[0, i] = array[i];
             }
 
             return result;

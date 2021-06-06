@@ -6,6 +6,7 @@ namespace ExcelOrderAddIn
     {
         public Excel.Worksheet Worksheet { get; set; }
         public string Name { get; private set; }
+
         public WorksheetItem(Excel.Worksheet worksheet)
         {
             Worksheet = worksheet;

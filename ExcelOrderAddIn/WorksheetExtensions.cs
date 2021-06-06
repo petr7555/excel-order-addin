@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -6,12 +7,13 @@ namespace ExcelOrderAddIn
 {
     public static class WorksheetExtensions
     {
-
         public static int NCols(this Excel.Worksheet worksheet)
         {
             var n = 1;
             while (worksheet.Cells[1, n++].Value2 != null)
-            { }
+            {
+            }
+
             return n - 2;
         }
 
@@ -20,7 +22,9 @@ namespace ExcelOrderAddIn
         {
             var n = 2;
             while (worksheet.Cells[n++, 1].Value2 != null)
-            { }
+            {
+            }
+
             return n - 3;
         }
 
@@ -39,6 +43,7 @@ namespace ExcelOrderAddIn
             {
                 result.Add(column.ToString());
             }
+
             return result;
         }
 
@@ -48,11 +53,11 @@ namespace ExcelOrderAddIn
             {
                 var name = worksheet.Name;
             }
-            catch (System.Runtime.InteropServices.COMException)
+            catch (COMException)
             {
                 return false;
-
             }
+
             return true;
         }
     }

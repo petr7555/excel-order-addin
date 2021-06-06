@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using ExcelOrderAddIn.Properties;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn
@@ -25,8 +26,8 @@ namespace ExcelOrderAddIn
 
         private void InitializeImageFolderPicker()
         {
-            imgFolderTextBox.Text = Properties.Settings.Default.ImgFolder;
-            folderBrowserDialog.SelectedPath = Properties.Settings.Default.ImgFolder;
+            imgFolderTextBox.Text = Settings.Default.ImgFolder;
+            folderBrowserDialog.SelectedPath = Settings.Default.ImgFolder;
         }
 
         private void Application_SheetActivate(object Sh)
@@ -43,9 +44,9 @@ namespace ExcelOrderAddIn
         {
             WorksheetItems = GetWorksheetItems();
 
-            RefreshTableComboBox(table1ComboBox, Properties.Settings.Default.Table1, 0);
-            RefreshTableComboBox(table2ComboBox, Properties.Settings.Default.Table2, 1);
-            RefreshTableComboBox(table3ComboBox, Properties.Settings.Default.Table3, 2);
+            RefreshTableComboBox(table1ComboBox, Settings.Default.Table1, 0);
+            RefreshTableComboBox(table2ComboBox, Settings.Default.Table2, 1);
+            RefreshTableComboBox(table3ComboBox, Settings.Default.Table3, 2);
         }
 
         private IEnumerable<WorksheetItem> GetWorksheetItems()
@@ -66,6 +67,7 @@ namespace ExcelOrderAddIn
             {
                 comboBox.SelectedIndex = allWorksheetsNames.ToList().IndexOf(preferredTable);
             }
+
             // TODO zjistit, co je pohodlnější
             //if (comboBox.SelectedIndex == -1)
             //{
@@ -81,12 +83,10 @@ namespace ExcelOrderAddIn
          * TODO add asynchronous progress bar
          * 
          */
-        private void createBtn_Click(object sender, System.EventArgs e)
+        private void createBtn_Click(object sender, EventArgs e)
         {
-
             if (ValidateChildren(ValidationConstraints.Enabled))
             {
-
                 Globals.ThisAddIn.Application.ScreenUpdating = false;
 
                 var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
@@ -114,9 +114,7 @@ namespace ExcelOrderAddIn
                 Globals.ThisAddIn.Application.ScreenUpdating = true;
 
                 MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
-
             }
-
         }
 
         public static Excel.Worksheet CreateNewWorksheet()
@@ -136,10 +134,11 @@ namespace ExcelOrderAddIn
             {
                 newName = $"New Order {i++}";
             }
+
             return newName;
         }
 
-        private void ValidateComboBox(ComboBox comboBox, System.ComponentModel.CancelEventArgs e)
+        private void ValidateComboBox(ComboBox comboBox, CancelEventArgs e)
         {
             if (comboBox.SelectedIndex == -1)
             {
@@ -153,57 +152,57 @@ namespace ExcelOrderAddIn
             }
         }
 
-        private void table1ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void table1ComboBox_Validating(object sender, CancelEventArgs e)
         {
             ValidateComboBox(table1ComboBox, e);
         }
 
-        private void table2ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void table2ComboBox_Validating(object sender, CancelEventArgs e)
         {
             ValidateComboBox(table2ComboBox, e);
         }
 
-        private void table3ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void table3ComboBox_Validating(object sender, CancelEventArgs e)
         {
             ValidateComboBox(table3ComboBox, e);
         }
 
-        private void idCol1ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void idCol1ComboBox_Validating(object sender, CancelEventArgs e)
         {
             ValidateComboBox(idCol1ComboBox, e);
         }
 
-        private void idCol2ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void idCol2ComboBox_Validating(object sender, CancelEventArgs e)
         {
             ValidateComboBox(idCol2ComboBox, e);
         }
 
-        private void idCol3ComboBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void idCol3ComboBox_Validating(object sender, CancelEventArgs e)
         {
             ValidateComboBox(idCol3ComboBox, e);
         }
 
-        private void table1ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void table1ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Table1 = (table1ComboBox.SelectedItem as WorksheetItem).Name;
+            Settings.Default.Table1 = (table1ComboBox.SelectedItem as WorksheetItem).Name;
 
-            RefreshIdColComboBox(table1ComboBox, idCol1ComboBox, Properties.Settings.Default.IdCol1);
+            RefreshIdColComboBox(table1ComboBox, idCol1ComboBox, Settings.Default.IdCol1);
             Validate();
         }
 
-        private void table2ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void table2ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Table2 = (table2ComboBox.SelectedItem as WorksheetItem).Name;
+            Settings.Default.Table2 = (table2ComboBox.SelectedItem as WorksheetItem).Name;
 
-            RefreshIdColComboBox(table2ComboBox, idCol2ComboBox, Properties.Settings.Default.IdCol2);
+            RefreshIdColComboBox(table2ComboBox, idCol2ComboBox, Settings.Default.IdCol2);
             Validate();
         }
 
-        private void table3ComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void table3ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Table3 = (table3ComboBox.SelectedItem as WorksheetItem).Name;
+            Settings.Default.Table3 = (table3ComboBox.SelectedItem as WorksheetItem).Name;
 
-            RefreshIdColComboBox(table3ComboBox, idCol3ComboBox, Properties.Settings.Default.IdCol3);
+            RefreshIdColComboBox(table3ComboBox, idCol3ComboBox, Settings.Default.IdCol3);
             Validate();
         }
 
@@ -227,7 +226,8 @@ namespace ExcelOrderAddIn
         private void deleteGeneratedSheetsBtn_Click(object sender, EventArgs e)
         {
             var sheetName = "New Order";
-            var generatedSheets = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>().Where(ws => ws.Name.StartsWith(sheetName));
+            var generatedSheets = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>()
+                .Where(ws => ws.Name.StartsWith(sheetName));
             var count = generatedSheets.Count();
 
             Globals.ThisAddIn.Application.Application.DisplayAlerts = false;
@@ -235,6 +235,7 @@ namespace ExcelOrderAddIn
             {
                 worksheet.Delete();
             }
+
             Globals.ThisAddIn.Application.Application.DisplayAlerts = true;
 
             MessageBox.Show($"{count} sheets have been deleted.", "Success!");
@@ -242,19 +243,19 @@ namespace ExcelOrderAddIn
 
         private void idCol1ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.IdCol1 = idCol1ComboBox.SelectedItem as string;
+            Settings.Default.IdCol1 = idCol1ComboBox.SelectedItem as string;
             Validate();
         }
 
         private void idCol2ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.IdCol2 = idCol2ComboBox.SelectedItem as string;
+            Settings.Default.IdCol2 = idCol2ComboBox.SelectedItem as string;
             Validate();
         }
 
         private void idCol3ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.IdCol3 = idCol3ComboBox.SelectedItem as string;
+            Settings.Default.IdCol3 = idCol3ComboBox.SelectedItem as string;
             Validate();
         }
 
@@ -263,7 +264,7 @@ namespace ExcelOrderAddIn
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 imgFolderTextBox.Text = folderBrowserDialog.SelectedPath;
-                Properties.Settings.Default.ImgFolder = folderBrowserDialog.SelectedPath;
+                Settings.Default.ImgFolder = folderBrowserDialog.SelectedPath;
             }
         }
 

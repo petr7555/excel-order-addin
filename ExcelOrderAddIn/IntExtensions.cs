@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExcelOrderAddIn
 {
@@ -15,14 +11,13 @@ namespace ExcelOrderAddIn
          */
         public static string ToLetter(this int columnNumber)
         {
-            int dividend = columnNumber;
-            string columnName = "";
-            int modulo;
+            var dividend = columnNumber;
+            var columnName = "";
 
             while (dividend > 0)
             {
-                modulo = (dividend - 1) % 26;
-                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
+                var modulo = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modulo) + columnName;
                 dividend = (dividend - modulo) / 26;
             }
 
