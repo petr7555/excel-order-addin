@@ -124,13 +124,13 @@ namespace ExcelOrderAddIn
 
         public class StyleBuilder
         {
-            Excel.Style Style = null;
+            private Excel.Style _style = null;
 
             public StyleBuilder(string styleName)
             {
                 try
                 {
-                    Style = Globals.ThisAddIn.Application.ActiveWorkbook.Styles.Add(styleName);
+                    _style = Globals.ThisAddIn.Application.ActiveWorkbook.Styles.Add(styleName);
                 }
                 catch (COMException e) when (e.Message ==
                                              "Add method of Styles class failed")
@@ -140,9 +140,9 @@ namespace ExcelOrderAddIn
 
             public StyleBuilder WithFontName(string fontName)
             {
-                if (Style != null)
+                if (_style != null)
                 {
-                    Style.Font.Name = fontName;
+                    _style.Font.Name = fontName;
                 }
 
                 return this;
@@ -150,9 +150,9 @@ namespace ExcelOrderAddIn
 
             public StyleBuilder WithFontSize(int fontSize)
             {
-                if (Style != null)
+                if (_style != null)
                 {
-                    Style.Font.Size = fontSize;
+                    _style.Font.Size = fontSize;
                 }
 
                 return this;
@@ -160,9 +160,9 @@ namespace ExcelOrderAddIn
 
             public StyleBuilder WithBold()
             {
-                if (Style != null)
+                if (_style != null)
                 {
-                    Style.Font.Bold = true;
+                    _style.Font.Bold = true;
                 }
 
                 return this;
@@ -170,9 +170,9 @@ namespace ExcelOrderAddIn
 
             public StyleBuilder WithTextColor(Color textColor)
             {
-                if (Style != null)
+                if (_style != null)
                 {
-                    Style.Font.Color = textColor;
+                    _style.Font.Color = textColor;
                 }
 
                 return this;
@@ -180,9 +180,9 @@ namespace ExcelOrderAddIn
 
             public StyleBuilder WithBackgroundColor(Color backgroundColor)
             {
-                if (Style == null) return this;
-                Style.Interior.Color = backgroundColor;
-                Style.Interior.Pattern = Excel.XlPattern.xlPatternSolid;
+                if (_style == null) return this;
+                _style.Interior.Color = backgroundColor;
+                _style.Interior.Pattern = Excel.XlPattern.xlPatternSolid;
 
                 return this;
             }

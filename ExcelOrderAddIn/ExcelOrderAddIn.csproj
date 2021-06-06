@@ -180,21 +180,27 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="IntExtensions.cs" />
-    <Compile Include="ArrayExtensions.cs" />
+    <Compile Include="Extensions\ArrayExtensions.cs" />
+    <Compile Include="Extensions\IntExtensions.cs" />
+    <Compile Include="Extensions\WorksheetExtensions.cs" />
+    <Compile Include="Model\Table.cs" />
+    <Compile Include="Model\WorksheetItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Styling.cs" />
-    <Compile Include="Table.cs" />
-    <Compile Include="UserControl.cs">
+    <Compile Include="UI\Ribbon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Ribbon.Designer.cs">
+      <DependentUpon>Ribbon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\UserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UserControl.Designer.cs">
+    <Compile Include="UI\UserControl.Designer.cs">
       <DependentUpon>UserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="WorksheetExtensions.cs" />
-    <Compile Include="WorksheetItem.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -205,10 +211,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Ribbon.resx">
+    <EmbeddedResource Include="UI\Ribbon.resx">
       <DependentUpon>Ribbon.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserControl.resx">
+    <EmbeddedResource Include="UI\UserControl.resx">
       <DependentUpon>UserControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
@@ -221,12 +227,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="Ribbon.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Ribbon.Designer.cs">
-      <DependentUpon>Ribbon.cs</DependentUpon>
     </Compile>
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>

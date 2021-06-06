@@ -63,12 +63,9 @@ namespace ExcelOrderAddIn
         }
 
         /**
-         * 
          * Main logic of plugin
          * 
-         * 
          * TODO add asynchronous progress bar
-         * 
          */
         private void createBtn_Click(object sender, EventArgs e)
         {

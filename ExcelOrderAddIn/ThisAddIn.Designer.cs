@@ -55,7 +55,7 @@ namespace ExcelOrderAddIn {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Tools.Office.ProgrammingModel.dll", "16.0.0.0")]
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
         protected override void FinishInitialization() {
-            this.InternalStartup();
+            InternalStartup();
             this.OnStartup();
         }
         
