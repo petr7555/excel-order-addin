@@ -58,7 +58,6 @@ namespace ExcelOrderAddIn
                 comboBox.SelectedIndex = allWorksheetsNames.ToList().IndexOf(preferredTable);
             }
 
-            // TODO zjistit, co je pohodlnější
             if (comboBox.SelectedIndex == -1)
             {
                 comboBox.SelectedIndex = Math.Min(preferredIndex, comboBox.Items.Count - 1);
@@ -66,15 +65,17 @@ namespace ExcelOrderAddIn
         }
 
         /**
-         * Main logic of plugin
+         * Main logic of add-in
          * 
          * TODO add asynchronous progress bar
          */
-        private void createBtn_Click(object sender, EventArgs e)
+        private async void createBtn_Click(object sender, EventArgs e)
         {
+            UpdateProgress(0, "");
+
             if (!ValidateChildren(ValidationConstraints.Enabled)) return;
-            
-            //Globals.ThisAddIn.Application.ScreenUpdating = false;
+
+            Globals.ThisAddIn.Application.Interactive = false;
 
             var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
             var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
@@ -92,15 +93,29 @@ namespace ExcelOrderAddIn
 
             joined.SelectColumns();
 
-            int topOffset = 2;
+            const int topOffset = 2;
             joined.PrintTotalPriceTable(newWorksheet, topOffset);
-            joined.PrintToWorksheet(newWorksheet, topOffset);
 
-            joined.InsertImages(newWorksheet, topOffset, imgFolderTextBox.Text);
+            UpdateProgress(40, "Printing data to worksheet...");
+            await joined.PrintToWorksheet(newWorksheet, topOffset);
 
-            Globals.ThisAddIn.Application.ScreenUpdating = true;
+            UpdateProgress(80, "Inserting images...");
+            await joined.InsertImages(newWorksheet, topOffset, imgFolderTextBox.Text);
+
+            UpdateProgress(100, "Done");
+
+            Globals.ThisAddIn.Application.Interactive = true;
 
             MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
+        }
+
+        private void UpdateProgress(int percent, string status)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                progressBar.Value = percent;
+                progressBarLabel.Text = status;
+            }));
         }
 
         private static Excel.Worksheet CreateNewWorksheet()
@@ -191,7 +206,8 @@ namespace ExcelOrderAddIn
             Validate();
         }
 
-        private static void RefreshIdColComboBox(ComboBox tableComboBox, ComboBox idColComboBox, string preferredIdColumn)
+        private static void RefreshIdColComboBox(ComboBox tableComboBox, ComboBox idColComboBox,
+            string preferredIdColumn)
         {
             idColComboBox.Items.Clear();
             var items = (tableComboBox.SelectedItem as WorksheetItem).Worksheet.GetColumnNames();
@@ -247,7 +263,7 @@ namespace ExcelOrderAddIn
         private void selectImgFolderBtn_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
-            
+
             imgFolderTextBox.Text = folderBrowserDialog.SelectedPath;
             Settings.Default.ImgFolder = folderBrowserDialog.SelectedPath;
         }

@@ -49,11 +49,12 @@ namespace ExcelOrderAddIn
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.selectImgFolderBtn = new System.Windows.Forms.Button();
             this.createBtn = new System.Windows.Forms.Button();
+            this.refreshBtn = new System.Windows.Forms.Button();
+            this.refreshBtnImageList = new System.Windows.Forms.ImageList(this.components);
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.imgFolderTextBox = new System.Windows.Forms.TextBox();
-            this.refreshBtnImageList = new System.Windows.Forms.ImageList(this.components);
-            this.refreshBtn = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.progressBarLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -242,20 +243,6 @@ namespace ExcelOrderAddIn
             this.createBtn.UseVisualStyleBackColor = false;
             this.createBtn.Click += new System.EventHandler(this.createBtn_Click);
             // 
-            // imgFolderTextBox
-            // 
-            this.imgFolderTextBox.Location = new System.Drawing.Point(14, 130);
-            this.imgFolderTextBox.Name = "imgFolderTextBox";
-            this.imgFolderTextBox.ReadOnly = true;
-            this.imgFolderTextBox.Size = new System.Drawing.Size(257, 20);
-            this.imgFolderTextBox.TabIndex = 15;
-            // 
-            // refreshBtnImageList
-            // 
-            this.refreshBtnImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("refreshBtnImageList.ImageStream")));
-            this.refreshBtnImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.refreshBtnImageList.Images.SetKeyName(0, "refresh.png");
-            // 
             // refreshBtn
             // 
             this.refreshBtn.BackColor = System.Drawing.Color.DeepSkyBlue;
@@ -273,6 +260,20 @@ namespace ExcelOrderAddIn
             this.refreshBtn.UseVisualStyleBackColor = false;
             this.refreshBtn.Click += new System.EventHandler(this.refreshBtn_Click);
             // 
+            // refreshBtnImageList
+            // 
+            this.refreshBtnImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("refreshBtnImageList.ImageStream")));
+            this.refreshBtnImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.refreshBtnImageList.Images.SetKeyName(0, "refresh.png");
+            // 
+            // imgFolderTextBox
+            // 
+            this.imgFolderTextBox.Location = new System.Drawing.Point(14, 130);
+            this.imgFolderTextBox.Name = "imgFolderTextBox";
+            this.imgFolderTextBox.ReadOnly = true;
+            this.imgFolderTextBox.Size = new System.Drawing.Size(257, 20);
+            this.imgFolderTextBox.TabIndex = 15;
+            // 
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(14, 157);
@@ -280,11 +281,20 @@ namespace ExcelOrderAddIn
             this.progressBar.Size = new System.Drawing.Size(294, 29);
             this.progressBar.TabIndex = 19;
             // 
+            // progressBarLabel
+            // 
+            this.progressBarLabel.AutoSize = true;
+            this.progressBarLabel.Location = new System.Drawing.Point(14, 193);
+            this.progressBarLabel.Name = "progressBarLabel";
+            this.progressBarLabel.Size = new System.Drawing.Size(0, 13);
+            this.progressBarLabel.TabIndex = 21;
+            // 
             // UserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
+            this.Controls.Add(this.progressBarLabel);
             this.Controls.Add(this.createBtn);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.refreshBtn);
@@ -337,5 +347,6 @@ namespace ExcelOrderAddIn
         private System.Windows.Forms.ComboBox table1ComboBox;
         private System.Windows.Forms.Button createBtn;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label progressBarLabel;
     }
 }

@@ -76,54 +76,50 @@ namespace ExcelOrderAddIn.Model
             return new Table(newCols, filteredData.ToJaggedArray(), _idCol);
         }
 
-        internal void PrintToWorksheet(Excel.Worksheet worksheet, int topOffset = 0)
+        internal async Task PrintToWorksheet(Excel.Worksheet worksheet, int topOffset = 0)
         {
-            PrintRawDataToWorksheet(worksheet, topOffset);
-
-            //FormatData(worksheet);
-        }
-
-        private void PrintRawDataToWorksheet(Excel.Worksheet worksheet, int topOffset)
-        {
-            if (NCols == 0)
+            await Task.Run(() =>
             {
-                return;
-            }
+                if (NCols == 0)
+                {
+                    return;
+                }
 
-            // insert header
-            var headerStartCell = worksheet.Cells[topOffset + 1, 1] as Excel.Range;
-            var headerEndCell = worksheet.Cells[topOffset + 1, NCols] as Excel.Range;
-            var headerRange = worksheet.Range[headerStartCell, headerEndCell];
-            headerRange.Value2 = _columns.ToExcelMultidimArray();
-            Styling.Apply(headerRange, Styling.Style.Header);
+                // insert header
+                var headerStartCell = worksheet.Cells[topOffset + 1, 1] as Excel.Range;
+                var headerEndCell = worksheet.Cells[topOffset + 1, NCols] as Excel.Range;
+                var headerRange = worksheet.Range[headerStartCell, headerEndCell];
+                headerRange.Value2 = _columns.ToExcelMultidimArray();
+                Styling.Apply(headerRange, Styling.Style.Header);
 
-            // insert data
-            var dataStartCell = worksheet.Cells[topOffset + 2, 1] as Excel.Range;
-            var dataEndCell = worksheet.Cells[topOffset + 1 + Math.Max(NRows, 1), NCols] as Excel.Range;
-            var dataRange = worksheet.Range[dataStartCell, dataEndCell];
-            dataRange.Value2 = Data.ToExcelMultidimArray();
+                // insert data
+                var dataStartCell = worksheet.Cells[topOffset + 2, 1] as Excel.Range;
+                var dataEndCell = worksheet.Cells[topOffset + 1 + Math.Max(NRows, 1), NCols] as Excel.Range;
+                var dataRange = worksheet.Range[dataStartCell, dataEndCell];
+                dataRange.Value2 = Data.ToExcelMultidimArray();
 
-            // Auto-fit all columns
-            worksheet.UsedRange.Columns.AutoFit();
+                // Auto-fit all columns
+                worksheet.UsedRange.Columns.AutoFit();
 
-            // Set row height so that images fit
-            dataRange.RowHeight = ImgColHeight;
+                // Set row height so that images fit
+                dataRange.RowHeight = ImgColHeight;
 
-            FormatImageColumn(worksheet);
-            FormatEANColumn(worksheet, topOffset);
-            FormatColliColumn(worksheet, topOffset);
-            FormatNewColumn(worksheet, topOffset);
-            FormatExwCZColumn(worksheet, topOffset);
-            FormatOrderColumn(worksheet, topOffset);
-            FormatTotalOrderColumn(worksheet, topOffset);
-            FormatRRPColumn(worksheet, topOffset);
-            FormatInStockColumn(worksheet, topOffset);
-            FormatWillBeAvailableColumn(worksheet, topOffset);
-            FormatStockComingColumn(worksheet, topOffset);
-            FormatNoteForStockColumn(worksheet, topOffset);
+                FormatImageColumn(worksheet);
+                FormatEANColumn(worksheet, topOffset);
+                FormatColliColumn(worksheet, topOffset);
+                FormatNewColumn(worksheet, topOffset);
+                FormatExwCZColumn(worksheet, topOffset);
+                FormatOrderColumn(worksheet, topOffset);
+                FormatTotalOrderColumn(worksheet, topOffset);
+                FormatRRPColumn(worksheet, topOffset);
+                FormatInStockColumn(worksheet, topOffset);
+                FormatWillBeAvailableColumn(worksheet, topOffset);
+                FormatStockComingColumn(worksheet, topOffset);
+                FormatNoteForStockColumn(worksheet, topOffset);
 
-            AddBorder(headerRange);
-            AddBorder(dataRange);
+                AddBorder(headerRange);
+                AddBorder(dataRange);
+            });
         }
 
         private void AddBorder(Excel.Range range)
@@ -231,8 +227,8 @@ namespace ExcelOrderAddIn.Model
             {
                 var row = topOffset + 2 + i;
                 worksheet.Cells[row, totalOrderIndex].Formula =
-                    $"={(priceIndex).ToLetter()}{row}*" +
-                    $"{(orderIndex).ToLetter()}{row}";
+                    $"={priceIndex.ToLetter()}{row}*" +
+                    $"{orderIndex.ToLetter()}{row}";
             });
         }
 
@@ -283,25 +279,28 @@ namespace ExcelOrderAddIn.Model
          * Only one selection rule applies now:
          *  - image name == value in 'Item' column
          */
-        internal void InsertImages(Excel.Worksheet worksheet, int topOffset, string imgFolder)
+        internal async Task InsertImages(Excel.Worksheet worksheet, int topOffset, string imgFolder)
         {
-            const int defaultRowSize = 15;
-
-            var imgNames = Data
-                .Select(row => row[_columns.IndexOf("Item")] as string);
-
-            var imgIdx = 0;
-            foreach (var imgName in imgNames)
+            await Task.Run(() =>
             {
-                if (FindImagePath(imgFolder, imgName, out var imgPath))
-                {
-                    worksheet.Shapes.AddPicture(imgPath, MsoTriState.msoFalse, MsoTriState.msoCTrue, 0,
-                        (topOffset + 1) * defaultRowSize + ImgColHeight * imgIdx + (ImgColHeight - ImgSize) / 2,
-                        ImgSize, ImgSize);
-                }
+                const int defaultRowSize = 15;
 
-                imgIdx++;
-            }
+                var imgNames = Data
+                    .Select(row => row[_columns.IndexOf("Item")] as string);
+
+                var imgIdx = 0;
+                foreach (var imgName in imgNames)
+                {
+                    if (FindImagePath(imgFolder, imgName, out var imgPath))
+                    {
+                        worksheet.Shapes.AddPicture(imgPath, MsoTriState.msoFalse, MsoTriState.msoCTrue, 0,
+                            (topOffset + 1) * defaultRowSize + ImgColHeight * imgIdx + (ImgColHeight - ImgSize) / 2,
+                            ImgSize, ImgSize);
+                    }
+
+                    imgIdx++;
+                }
+            });
         }
 
         /**
