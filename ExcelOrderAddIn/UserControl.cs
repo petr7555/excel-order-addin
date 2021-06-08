@@ -77,36 +77,47 @@ namespace ExcelOrderAddIn
 
             Globals.ThisAddIn.Application.Interactive = false;
 
-            var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
-            var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
-            var table3 = Table.FromComboBoxes(table3ComboBox, idCol3ComboBox);
+            try
+            {
+                var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
+                var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
+                var table3 = Table.FromComboBoxes(table3ComboBox, idCol3ComboBox);
 
-            var newWorksheet = CreateNewWorksheet();
+                var newWorksheet = CreateNewWorksheet();
 
-            var joined = table1.Join(table2).Join(table3);
+                var joined = table1.Join(table2).Join(table3);
 
-            joined.RemoveUnavailableProducts();
+                joined.RemoveUnavailableProducts();
 
-            joined.InsertColumns();
+                joined.InsertColumns();
 
-            joined.RenameColumns();
+                joined.RenameColumns();
 
-            joined.SelectColumns();
+                joined.SelectColumns();
 
-            const int topOffset = 2;
-            joined.PrintTotalPriceTable(newWorksheet, topOffset);
+                const int topOffset = 2;
+                joined.PrintTotalPriceTable(newWorksheet, topOffset);
 
-            UpdateProgress(40, "Printing data to worksheet...");
-            await joined.PrintToWorksheet(newWorksheet, topOffset);
+                UpdateProgress(40, "Printing data to worksheet...");
+                await joined.PrintToWorksheet(newWorksheet, topOffset);
 
-            UpdateProgress(80, "Inserting images...");
-            await joined.InsertImages(newWorksheet, topOffset, imgFolderTextBox.Text);
+                UpdateProgress(80, "Inserting images...");
+                await joined.InsertImages(newWorksheet, topOffset, imgFolderTextBox.Text);
 
-            UpdateProgress(100, "Done");
-
-            Globals.ThisAddIn.Application.Interactive = true;
-
-            MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!");
+                UpdateProgress(100, "Done.");
+                MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                UpdateProgress(100, "Failed.");
+                MessageBox.Show($"Some error occurred. Details:\n{ex}", "Error!", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Globals.ThisAddIn.Application.Interactive = true;
+            }
         }
 
         private void UpdateProgress(int percent, string status)
@@ -239,7 +250,8 @@ namespace ExcelOrderAddIn
 
             Globals.ThisAddIn.Application.Application.DisplayAlerts = true;
 
-            MessageBox.Show($"{count} sheets have been deleted.", "Success!");
+            MessageBox.Show($"{count} sheets have been deleted.", "Success!", MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
 
         private void idCol1ComboBox_SelectedIndexChanged(object sender, EventArgs e)

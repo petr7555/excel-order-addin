@@ -32,7 +32,8 @@ namespace ExcelOrderAddIn.Extensions
         {
             if (!worksheet.Exists())
             {
-                MessageBox.Show("The selected worksheet does not exist anymore, please refresh.", "Refresh!");
+                MessageBox.Show("The selected worksheet does not exist anymore, please refresh.", "Refresh!",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return new List<string>();
             }
 
