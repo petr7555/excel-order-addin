@@ -180,6 +180,7 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Exceptions\ProgrammerErrorException.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\WorksheetExtensions.cs" />

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ExcelOrderAddIn.Exceptions;
 using ExcelOrderAddIn.Extensions;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -29,7 +30,6 @@ namespace ExcelOrderAddIn.Model
         // Quotes are escaped by doubling them both in VB and regex.
         private const string AccountingFormat =
             @"_([$€-x-euro2] * #,##0.00_);_([$€-x-euro2] * (#,##0.00);_([$€-x-euro2] * ""-""??_);_(@_)";
-
         private const string IntegerFormat = "0";
         private const string TextFormat = "@";
 
@@ -198,7 +198,7 @@ namespace ExcelOrderAddIn.Model
         {
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.RedBoldText, New);
 
-            var colIndex = _columns.IndexOf(New) + 1;
+            var colIndex = GetColumnIndex(New) + 1;
             var headerCell = worksheet.Cells[topOffset + 1, colIndex];
             Styling.Apply(headerCell, Styling.Style.RedBoldHeaderText);
         }
@@ -263,6 +263,10 @@ namespace ExcelOrderAddIn.Model
 
         internal void CheckAvailableColumns()
         {
+            // Further methods rely on some columns to exist.
+            // Make sure the column is not needed for other methods
+            // before making it optional.
+            // TODO Could be configurable
             var importanceDict = new Dictionary<string, ColumnImportance>
             {
                 {Produkt, ColumnImportance.Mandatory},
@@ -290,12 +294,12 @@ namespace ExcelOrderAddIn.Model
                     $"Data do not contain the following columns: {string.Join(", ", notFoundColumns)}.");
             }
         }
-        
+
         private void InsertTotalOrderFormula(Excel.Worksheet worksheet, int topOffset)
         {
-            var totalOrderIndex = _columns.IndexOf(TotalOrder) + 1;
-            var priceIndex = _columns.IndexOf(ExwCz) + 1;
-            var orderIndex = _columns.IndexOf(Order) + 1;
+            var totalOrderIndex = GetColumnIndex(TotalOrder) + 1;
+            var priceIndex = GetColumnIndex(ExwCz) + 1;
+            var orderIndex = GetColumnIndex(Order) + 1;
 
             Parallel.For(0, NRows, i =>
             {
@@ -315,7 +319,7 @@ namespace ExcelOrderAddIn.Model
 
         private Excel.Range GetColumnRange(Excel.Worksheet worksheet, int topOffset, string columnName)
         {
-            var colIndex = _columns.IndexOf(columnName) + 1;
+            var colIndex = GetColumnIndex(columnName) + 1;
             var startCell = worksheet.Cells[topOffset + 2, colIndex] as Excel.Range;
             var endCell = worksheet.Cells[topOffset + 1 + Math.Max(NRows, 1), colIndex] as Excel.Range;
             return worksheet.Range[startCell, endCell];
@@ -324,7 +328,7 @@ namespace ExcelOrderAddIn.Model
         internal void PrintTotalPriceTable(Excel.Worksheet worksheet, int topOffset)
         {
             // Index of 'Order' column in Excel's 'starting from 1 system'
-            var orderColIndex = _columns.IndexOf(Order) + 1;
+            var orderColIndex = GetColumnIndex(Order) + 1;
 
             var titleCell = worksheet.Cells[1, orderColIndex - 1];
             titleCell.Value2 = TotalOrder;
@@ -361,7 +365,7 @@ namespace ExcelOrderAddIn.Model
 
                 // image names are values in the 'Item' column
                 var imgNames = Data
-                    .Select(row => row[_columns.IndexOf(Item)] as string);
+                    .Select(row => row[GetColumnIndex(Item)] as string);
 
                 var imgIdx = 0;
                 foreach (var imgName in imgNames)
@@ -398,20 +402,36 @@ namespace ExcelOrderAddIn.Model
             return false;
         }
 
+        private int GetColumnIndex(string columnName)
+        {
+            var columnIdx = _columns.IndexOf(columnName);
+            if (columnIdx == -1)
+            {
+                throw new ProgrammerErrorException(
+                    $"Data do not contain {columnName} column, this should have been checked before.");
+            }
+
+            return columnIdx;
+        }
+
         internal void RemoveUnavailableProducts()
         {
+            var budeKDispoziciIdx = GetColumnIndex(BudeKDispozici);
+            var udajSklad1Idx = GetColumnIndex(UdajSklad1);
+
             Data = Data
                 .Where(row => !(
-                    Convert.ToInt32(row[_columns.IndexOf(BudeKDispozici)]) == 0 &&
-                    (Convert.ToString(row[_columns.IndexOf(UdajSklad1)]).Contains("ukončeno") ||
-                     Convert.ToString(row[_columns.IndexOf(UdajSklad1)]).Contains("doprodej")
-                    ) || Convert.ToString(row[_columns.IndexOf(UdajSklad1)]).Contains("POS")
+                    Convert.ToInt32(row[budeKDispoziciIdx]) == 0 &&
+                    (Convert.ToString(row[udajSklad1Idx]).Contains("ukončeno") ||
+                     Convert.ToString(row[udajSklad1Idx]).Contains("doprodej")
+                    ) || Convert.ToString(row[udajSklad1Idx]).Contains("POS")
                 ))
                 .ToJaggedArray();
         }
 
         internal void SelectColumns()
         {
+            // TODO Could be configurable
             var allResultColumns = new List<string>
             {
                 Image,
@@ -452,6 +472,7 @@ namespace ExcelOrderAddIn.Model
 
         internal void RenameColumns()
         {
+            // TODO Could be configurable
             var translationDict = new Dictionary<string, string>
             {
                 {Produkt, Product},
@@ -490,9 +511,9 @@ namespace ExcelOrderAddIn.Model
             _columns.Add(WillBeAvailable);
             Data = Data
                 .Select(row => row.Append(
-                    Convert.ToInt32(row[_columns.IndexOf(BudeKDispozici)]) +
-                    Convert.ToInt32(row[_columns.IndexOf(Objednano)]) -
-                    Convert.ToInt32(row[_columns.IndexOf(Dodat)])
+                    Convert.ToInt32(row[GetColumnIndex(BudeKDispozici)]) +
+                    Convert.ToInt32(row[GetColumnIndex(Objednano)]) -
+                    Convert.ToInt32(row[GetColumnIndex(Dodat)])
                 ))
                 .ToJaggedArray();
         }
