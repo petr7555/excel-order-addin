@@ -239,13 +239,43 @@ namespace ExcelOrderAddIn
 
         private void deleteGeneratedSheetsBtn_Click(object sender, EventArgs e)
         {
-            const string sheetName = "New Order";
+            const string generatedSheetName = "New Order";
             var generatedSheets = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>()
-                .Where(ws => ws.Name.StartsWith(sheetName));
-            var count = generatedSheets.Count();
+                .Where(ws => ws.Name.StartsWith(generatedSheetName));
+            DeleteWorksheets(generatedSheets);
+        }
+
+        private void deleteNotGeneratedSheetsBtn_Click(object sender, EventArgs e)
+        {
+            const string generatedSheetName = "New Order";
+            var notGeneratedSheets = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>()
+                .Where(ws => !ws.Name.StartsWith(generatedSheetName));
+            DeleteWorksheets(notGeneratedSheets);
+        }
+
+        private void DeleteWorksheets(IEnumerable<Excel.Worksheet> worksheets)
+        {
+            var count = worksheets.Count();
+
+            if (count == 0)
+            {
+                MessageBox.Show($"No sheets to be deleted.", "No sheets", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (MessageBox.Show($"Do you really want to delete the following {count} sheet{(count > 1 ? "s" : "")}: {string.Join(", ", worksheets.Select(ws => ws.Name))}?", 
+                "Confirm deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+
+            var allSheetsCount = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>().Count();
+
+            if (count == allSheetsCount)
+            {
+                MessageBox.Show($"Cannot delete all sheets.", "Invalid operation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             Globals.ThisAddIn.Application.Application.DisplayAlerts = false;
-            foreach (var worksheet in generatedSheets)
+            foreach (var worksheet in worksheets)
             {
                 worksheet.Delete();
             }

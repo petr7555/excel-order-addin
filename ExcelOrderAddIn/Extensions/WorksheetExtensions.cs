@@ -52,6 +52,7 @@ namespace ExcelOrderAddIn.Extensions
         {
             try
             {
+                // accessing 'Name' property of non-existent worksheet will throw an exception
                 var unused = worksheet.Name;
             }
             catch (COMException)

@@ -45,6 +45,7 @@ namespace ExcelOrderAddIn
             this.table3ComboBox = new System.Windows.Forms.ComboBox();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.deleteNotGeneratedSheetsBtn = new System.Windows.Forms.Button();
             this.deleteGeneratedSheetsBtn = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.selectImgFolderBtn = new System.Windows.Forms.Button();
@@ -199,6 +200,7 @@ namespace ExcelOrderAddIn
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox1.Controls.Add(this.deleteNotGeneratedSheetsBtn);
             this.groupBox1.Controls.Add(this.deleteGeneratedSheetsBtn);
             this.groupBox1.Location = new System.Drawing.Point(14, 367);
             this.groupBox1.Name = "groupBox1";
@@ -206,6 +208,18 @@ namespace ExcelOrderAddIn
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Danger zone";
+            // 
+            // deleteNotGeneratedSheetsBtn
+            // 
+            this.deleteNotGeneratedSheetsBtn.BackColor = System.Drawing.Color.LightCoral;
+            this.deleteNotGeneratedSheetsBtn.Location = new System.Drawing.Point(6, 48);
+            this.deleteNotGeneratedSheetsBtn.Name = "deleteNotGeneratedSheetsBtn";
+            this.deleteNotGeneratedSheetsBtn.Size = new System.Drawing.Size(188, 23);
+            this.deleteNotGeneratedSheetsBtn.TabIndex = 1;
+            this.deleteNotGeneratedSheetsBtn.Text = "Delete not generated sheets";
+            this.toolTip.SetToolTip(this.deleteNotGeneratedSheetsBtn, "Deletes all sheets NOT starting with \'New Order\'.");
+            this.deleteNotGeneratedSheetsBtn.UseVisualStyleBackColor = false;
+            this.deleteNotGeneratedSheetsBtn.Click += new System.EventHandler(this.deleteNotGeneratedSheetsBtn_Click);
             // 
             // deleteGeneratedSheetsBtn
             // 
@@ -348,5 +362,6 @@ namespace ExcelOrderAddIn
         private System.Windows.Forms.Button createBtn;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label progressBarLabel;
+        private System.Windows.Forms.Button deleteNotGeneratedSheetsBtn;
     }
 }

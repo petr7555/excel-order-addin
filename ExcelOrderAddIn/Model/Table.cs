@@ -150,7 +150,7 @@ namespace ExcelOrderAddIn.Model
             var notFoundColumns = importanceDict.Where(x  => _columns.IndexOf(x.Key) == -1 && x.Value == ColumnImportance.MANDATORY);
             if (notFoundColumns.Count() > 0)
             {
-                throw new InvalidDataException($"Data do not contain the following columns: {string.Join(",", notFoundColumns)}.");
+                throw new InvalidDataException($"Data do not contain the following columns: {string.Join(", ", notFoundColumns)}.");
             }
         }
 
