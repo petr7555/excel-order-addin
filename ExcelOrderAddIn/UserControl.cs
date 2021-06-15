@@ -87,6 +87,8 @@ namespace ExcelOrderAddIn
 
                 var joined = table1.Join(table2).Join(table3);
 
+                joined.CheckAvailableColumns();
+
                 joined.RemoveUnavailableProducts();
 
                 joined.InsertColumns();

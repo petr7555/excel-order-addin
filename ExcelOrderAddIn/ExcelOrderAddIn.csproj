@@ -42,7 +42,7 @@
     <PublisherName>Petr Janík</PublisherName>
     <SupportUrl />
     <FriendlyName>ExcelOrderAddIn</FriendlyName>
-    <OfficeApplicationDescription>Generates and order table from tables exported from Altus Vario.</OfficeApplicationDescription>
+    <OfficeApplicationDescription>Generates an order table from tables exported from Altus Vario.</OfficeApplicationDescription>
     <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
   <ItemGroup>

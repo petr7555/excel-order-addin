@@ -13,6 +13,12 @@ namespace ExcelOrderAddIn.Model
 {
     internal class Table
     {
+        public enum ColumnImportance
+        {
+            MANDATORY,
+            OPTIONAL,
+        }
+
         // TODO Could be configurable
         private const int ImgColHeight = 76;
         private const int ImgColWidth = 13;
@@ -120,6 +126,32 @@ namespace ExcelOrderAddIn.Model
                 AddBorder(headerRange);
                 AddBorder(dataRange);
             });
+        }
+
+        internal void CheckAvailableColumns()
+        {
+            var importanceDict = new Dictionary<string, ColumnImportance>
+            {
+                {"Produkt", ColumnImportance.MANDATORY},
+                {"Katalogové číslo", ColumnImportance.MANDATORY},
+                {"Popis alternativní", ColumnImportance.MANDATORY},
+                {"Balení karton (ks)", ColumnImportance.MANDATORY},
+                {"Cena", ColumnImportance.MANDATORY},
+                {"Cena DMOC EUR", ColumnImportance.MANDATORY},
+                {"K dispozici", ColumnImportance.MANDATORY},
+                {"Bude k dispozici", ColumnImportance.MANDATORY},
+                {"Výrobce", ColumnImportance.MANDATORY},
+                {"Údaj 2", ColumnImportance.MANDATORY},
+                {"Údaj 1", ColumnImportance.MANDATORY},
+                {"Země původu", ColumnImportance.OPTIONAL},
+                {"Údaj sklad 1", ColumnImportance.MANDATORY},
+            };
+
+            var notFoundColumns = importanceDict.Where(x  => _columns.IndexOf(x.Key) == -1 && x.Value == ColumnImportance.MANDATORY);
+            if (notFoundColumns.Count() > 0)
+            {
+                throw new InvalidDataException($"Data do not contain the following columns: {string.Join(",", notFoundColumns)}.");
+            }
         }
 
         private void AddBorder(Excel.Range range)
@@ -337,7 +369,7 @@ namespace ExcelOrderAddIn.Model
 
         internal void SelectColumns()
         {
-            var resultColumns = new List<string>()
+            var allResultColumns = new List<string>()
             {
                 "Image",
                 "Product",
@@ -361,19 +393,22 @@ namespace ExcelOrderAddIn.Model
                 "Country of origin",
             };
 
-            var newOrderOfIndices = resultColumns
+            var availableResultColumns = allResultColumns
+                .Where(col => _columns.IndexOf(col) != -1);
+
+            var newOrderOfIndices = availableResultColumns
                 .Select(col => _columns.IndexOf(col));
 
             Data = Data
                 .Select(row => newOrderOfIndices.Select(index => row[index]))
                 .ToJaggedArray();
 
-            _columns = resultColumns;
+            _columns = availableResultColumns.ToList();
         }
 
         internal void RenameColumns()
         {
-            var dict = new Dictionary<string, string>
+            var translationDict = new Dictionary<string, string>
             {
                 {"Produkt", "Product"},
                 {"Katalogové číslo", "Item"},
@@ -389,7 +424,7 @@ namespace ExcelOrderAddIn.Model
                 {"Země původu", "Country of origin"},
             };
 
-            _columns = _columns.Select(col => dict.ContainsKey(col) ? dict[col] : col).ToList();
+            _columns = _columns.Select(col => translationDict.ContainsKey(col) ? translationDict[col] : col).ToList();
         }
 
         internal void InsertColumns()
