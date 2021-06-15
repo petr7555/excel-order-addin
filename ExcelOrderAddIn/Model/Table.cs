@@ -1,4 +1,5 @@
 ﻿// ReSharper disable once RedundantUsingDirective
+
 using Microsoft.Office.Core;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,10 @@ namespace ExcelOrderAddIn.Model
 {
     internal class Table
     {
-        public enum ColumnImportance
+        private enum ColumnImportance
         {
-            MANDATORY,
-            OPTIONAL,
+            Mandatory,
+            Optional,
         }
 
         // TODO Could be configurable
@@ -31,6 +32,43 @@ namespace ExcelOrderAddIn.Model
 
         private const string IntegerFormat = "0";
         private const string TextFormat = "@";
+
+        // Column names
+        private const string Produkt = "Produkt";
+        private const string KatalogoveCislo = "Katalogové číslo";
+        private const string PopisAlternativni = "Popis alternativní";
+        private const string BaleníKartonKs = "Balení karton (ks)";
+        private const string Cena = "Cena";
+        private const string CenaDmocEur = "Cena DMOC EUR";
+        private const string KDispozici = "K dispozici";
+        private const string BudeKDispozici = "Bude k dispozici";
+        private const string Vyrobce = "Výrobce";
+        private const string Udaj1 = "Údaj 1";
+        private const string Udaj2 = "Údaj 2";
+        private const string UdajSklad1 = "Údaj sklad 1";
+        private const string ZemePuvodu = "Země původu";
+        private const string Product = "Product";
+        private const string Item = "Item";
+        private const string Description = "Description";
+        private const string ColliPcsInCarton = "Colli (pcs in carton)";
+        private const string ExwCz = "EXW CZ";
+        private const string Rrp = "RRP";
+        private const string InStock = "In stock";
+        private const string StockComing = "Stock coming";
+        private const string Brand = "Brand";
+        private const string Category = "Category";
+        private const string ProductType = "Product type";
+        private const string CountryOfOrigin = "Country of origin";
+        private const string Objednano = "OBJEDNÁNO";
+        private const string Dodat = "DODAT";
+        private const string Image = "Image";
+        private const string Ean = "EAN";
+        private const string New = "NEW";
+        private const string Order = "Order";
+        private const string TotalOrder = "Total order";
+        private const string WillBeAvailable = "Will be available";
+        private const string NoteForStock = "Note for stock";
+        private const string Theme = "Theme";
 
         private IList<string> _columns;
         public object[][] Data = new object[0][];
@@ -111,13 +149,13 @@ namespace ExcelOrderAddIn.Model
                 dataRange.RowHeight = ImgColHeight;
 
                 FormatImageColumn(worksheet);
-                FormatEANColumn(worksheet, topOffset);
+                FormatEanColumn(worksheet, topOffset);
                 FormatColliColumn(worksheet, topOffset);
                 FormatNewColumn(worksheet, topOffset);
-                FormatExwCZColumn(worksheet, topOffset);
+                FormatExwCzColumn(worksheet, topOffset);
                 FormatOrderColumn(worksheet, topOffset);
                 FormatTotalOrderColumn(worksheet, topOffset);
-                FormatRRPColumn(worksheet, topOffset);
+                FormatRrpColumn(worksheet, topOffset);
                 FormatInStockColumn(worksheet, topOffset);
                 FormatWillBeAvailableColumn(worksheet, topOffset);
                 FormatStockComingColumn(worksheet, topOffset);
@@ -128,32 +166,6 @@ namespace ExcelOrderAddIn.Model
             });
         }
 
-        internal void CheckAvailableColumns()
-        {
-            var importanceDict = new Dictionary<string, ColumnImportance>
-            {
-                {"Produkt", ColumnImportance.MANDATORY},
-                {"Katalogové číslo", ColumnImportance.MANDATORY},
-                {"Popis alternativní", ColumnImportance.MANDATORY},
-                {"Balení karton (ks)", ColumnImportance.MANDATORY},
-                {"Cena", ColumnImportance.MANDATORY},
-                {"Cena DMOC EUR", ColumnImportance.MANDATORY},
-                {"K dispozici", ColumnImportance.MANDATORY},
-                {"Bude k dispozici", ColumnImportance.MANDATORY},
-                {"Výrobce", ColumnImportance.MANDATORY},
-                {"Údaj 2", ColumnImportance.MANDATORY},
-                {"Údaj 1", ColumnImportance.MANDATORY},
-                {"Země původu", ColumnImportance.OPTIONAL},
-                {"Údaj sklad 1", ColumnImportance.MANDATORY},
-            };
-
-            var notFoundColumns = importanceDict.Where(x  => _columns.IndexOf(x.Key) == -1 && x.Value == ColumnImportance.MANDATORY);
-            if (notFoundColumns.Count() > 0)
-            {
-                throw new InvalidDataException($"Data do not contain the following columns: {string.Join(", ", notFoundColumns)}.");
-            }
-        }
-
         private void AddBorder(Excel.Range range)
         {
             range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
@@ -161,51 +173,51 @@ namespace ExcelOrderAddIn.Model
 
         private void FormatWillBeAvailableColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, "Will be available");
-            FormatColumnAsInteger(worksheet, topOffset, "Stock coming");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, WillBeAvailable);
+            FormatColumnAsInteger(worksheet, topOffset, StockComing);
         }
 
         private void FormatInStockColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.SalmonBold, "In stock");
-            FormatColumnAsInteger(worksheet, topOffset, "In stock");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.SalmonBold, InStock);
+            FormatColumnAsInteger(worksheet, topOffset, InStock);
         }
 
-        private void FormatRRPColumn(Excel.Worksheet worksheet, int topOffset)
+        private void FormatRrpColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.BoldText, "RRP");
-            FormatColumnAsAccounting(worksheet, topOffset, "RRP");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.BoldText, Rrp);
+            FormatColumnAsAccounting(worksheet, topOffset, Rrp);
         }
 
-        private void FormatExwCZColumn(Excel.Worksheet worksheet, int topOffset)
+        private void FormatExwCzColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            FormatColumnAsAccounting(worksheet, topOffset, "EXW CZ");
+            FormatColumnAsAccounting(worksheet, topOffset, ExwCz);
         }
 
         private void FormatNewColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.RedBoldText, "NEW");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.RedBoldText, New);
 
-            var colIndex = _columns.IndexOf("NEW") + 1;
+            var colIndex = _columns.IndexOf(New) + 1;
             var headerCell = worksheet.Cells[topOffset + 1, colIndex];
             Styling.Apply(headerCell, Styling.Style.RedBoldHeaderText);
         }
 
         private void FormatColliColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            FormatColumnAsInteger(worksheet, topOffset, "Colli (pcs in carton)");
+            FormatColumnAsInteger(worksheet, topOffset, ColliPcsInCarton);
         }
 
         private void FormatNoteForStockColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, "Note for stock");
-            FormatColumnAsText(worksheet, topOffset, "Note for stock");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, NoteForStock);
+            FormatColumnAsText(worksheet, topOffset, NoteForStock);
         }
 
         private void FormatStockComingColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, "Stock coming");
-            FormatColumnAsInteger(worksheet, topOffset, "Stock coming");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, StockComing);
+            FormatColumnAsInteger(worksheet, topOffset, StockComing);
         }
 
         private static void FormatImageColumn(Excel.Worksheet worksheet)
@@ -216,19 +228,19 @@ namespace ExcelOrderAddIn.Model
 
         private void FormatOrderColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Input, "Order");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Input, Order);
         }
 
-        private void FormatEANColumn(Excel.Worksheet worksheet, int topOffset)
+        private void FormatEanColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            FormatColumnAsInteger(worksheet, topOffset, "EAN");
+            FormatColumnAsInteger(worksheet, topOffset, Ean);
         }
 
         private void FormatTotalOrderColumn(Excel.Worksheet worksheet, int topOffset)
         {
-            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Calculation, "Total order");
+            ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Calculation, TotalOrder);
             InsertTotalOrderFormula(worksheet, topOffset);
-            FormatColumnAsAccounting(worksheet, topOffset, "Total order");
+            FormatColumnAsAccounting(worksheet, topOffset, TotalOrder);
         }
 
         private void FormatColumnAsAccounting(Excel.Worksheet worksheet, int topOffset, string columnName)
@@ -249,11 +261,41 @@ namespace ExcelOrderAddIn.Model
             range.NumberFormat = TextFormat;
         }
 
+        internal void CheckAvailableColumns()
+        {
+            var importanceDict = new Dictionary<string, ColumnImportance>
+            {
+                {Produkt, ColumnImportance.Mandatory},
+                {KatalogoveCislo, ColumnImportance.Mandatory},
+                {PopisAlternativni, ColumnImportance.Mandatory},
+                {BaleníKartonKs, ColumnImportance.Mandatory},
+                {Cena, ColumnImportance.Mandatory},
+                {CenaDmocEur, ColumnImportance.Mandatory},
+                {KDispozici, ColumnImportance.Mandatory},
+                {BudeKDispozici, ColumnImportance.Mandatory},
+                {Vyrobce, ColumnImportance.Mandatory},
+                {UdajSklad1, ColumnImportance.Mandatory},
+                {Udaj1, ColumnImportance.Mandatory},
+                {Udaj2, ColumnImportance.Mandatory},
+                {Objednano, ColumnImportance.Mandatory},
+                {Dodat, ColumnImportance.Mandatory},
+                {ZemePuvodu, ColumnImportance.Optional},
+            };
+
+            var notFoundColumns = importanceDict
+                .Where(x => _columns.IndexOf(x.Key) == -1 && x.Value == ColumnImportance.Mandatory).ToList();
+            if (notFoundColumns.Count > 0)
+            {
+                throw new InvalidDataException(
+                    $"Data do not contain the following columns: {string.Join(", ", notFoundColumns)}.");
+            }
+        }
+        
         private void InsertTotalOrderFormula(Excel.Worksheet worksheet, int topOffset)
         {
-            var totalOrderIndex = _columns.IndexOf("Total order") + 1;
-            var priceIndex = _columns.IndexOf("EXW CZ") + 1;
-            var orderIndex = _columns.IndexOf("Order") + 1;
+            var totalOrderIndex = _columns.IndexOf(TotalOrder) + 1;
+            var priceIndex = _columns.IndexOf(ExwCz) + 1;
+            var orderIndex = _columns.IndexOf(Order) + 1;
 
             Parallel.For(0, NRows, i =>
             {
@@ -282,10 +324,10 @@ namespace ExcelOrderAddIn.Model
         internal void PrintTotalPriceTable(Excel.Worksheet worksheet, int topOffset)
         {
             // Index of 'Order' column in Excel's 'starting from 1 system'
-            var orderColIndex = _columns.IndexOf("Order") + 1;
+            var orderColIndex = _columns.IndexOf(Order) + 1;
 
             var titleCell = worksheet.Cells[1, orderColIndex - 1];
-            titleCell.Value2 = "Total order";
+            titleCell.Value2 = TotalOrder;
             Styling.Apply(titleCell, Styling.Style.Header);
 
             var unitsCell = worksheet.Cells[1, orderColIndex];
@@ -298,7 +340,7 @@ namespace ExcelOrderAddIn.Model
             var totalPriceCell = worksheet.Cells[1, orderColIndex + 1];
             Styling.Apply(totalPriceCell, Styling.Style.Calculation);
             totalPriceCell.NumberFormat = AccountingFormat;
-            totalPriceCell.Formula = $"=SUM(" +
+            totalPriceCell.Formula = "=SUM(" +
                                      $"{(orderColIndex + 1).ToLetter()}{topOffset + 2}:" +
                                      $"{(orderColIndex + 1).ToLetter()}{topOffset + 1 + NRows})";
 
@@ -317,8 +359,9 @@ namespace ExcelOrderAddIn.Model
             {
                 const int defaultRowSize = 15;
 
+                // image names are values in the 'Item' column
                 var imgNames = Data
-                    .Select(row => row[_columns.IndexOf("Item")] as string);
+                    .Select(row => row[_columns.IndexOf(Item)] as string);
 
                 var imgIdx = 0;
                 foreach (var imgName in imgNames)
@@ -359,42 +402,43 @@ namespace ExcelOrderAddIn.Model
         {
             Data = Data
                 .Where(row => !(
-                    Convert.ToInt32(row[_columns.IndexOf("Bude k dispozici")]) == 0 &&
-                    (Convert.ToString(row[_columns.IndexOf("Údaj sklad 1")]).Contains("ukončeno") ||
-                     Convert.ToString(row[_columns.IndexOf("Údaj sklad 1")]).Contains("doprodej")
-                    ) || Convert.ToString(row[_columns.IndexOf("Údaj sklad 1")]).Contains("POS")
+                    Convert.ToInt32(row[_columns.IndexOf(BudeKDispozici)]) == 0 &&
+                    (Convert.ToString(row[_columns.IndexOf(UdajSklad1)]).Contains("ukončeno") ||
+                     Convert.ToString(row[_columns.IndexOf(UdajSklad1)]).Contains("doprodej")
+                    ) || Convert.ToString(row[_columns.IndexOf(UdajSklad1)]).Contains("POS")
                 ))
                 .ToJaggedArray();
         }
 
         internal void SelectColumns()
         {
-            var allResultColumns = new List<string>()
+            var allResultColumns = new List<string>
             {
-                "Image",
-                "Product",
-                "Item",
-                "EAN",
-                "Description",
-                "Colli (pcs in carton)",
-                "NEW",
-                "EXW CZ",
-                "Order",
-                "Total order",
-                "RRP",
-                "In stock",
-                "Will be available",
-                "Stock coming",
-                "Note for stock",
-                "Brand",
-                "Category",
-                "Product type",
-                "Theme",
-                "Country of origin",
+                Image,
+                Product,
+                Item,
+                Ean,
+                Description,
+                ColliPcsInCarton,
+                New,
+                ExwCz,
+                Order,
+                TotalOrder,
+                Rrp,
+                InStock,
+                WillBeAvailable,
+                StockComing,
+                NoteForStock,
+                Brand,
+                Category,
+                ProductType,
+                Theme,
+                CountryOfOrigin,
             };
 
             var availableResultColumns = allResultColumns
-                .Where(col => _columns.IndexOf(col) != -1);
+                .Where(col => _columns.IndexOf(col) != -1)
+                .ToList();
 
             var newOrderOfIndices = availableResultColumns
                 .Select(col => _columns.IndexOf(col));
@@ -403,25 +447,25 @@ namespace ExcelOrderAddIn.Model
                 .Select(row => newOrderOfIndices.Select(index => row[index]))
                 .ToJaggedArray();
 
-            _columns = availableResultColumns.ToList();
+            _columns = availableResultColumns;
         }
 
         internal void RenameColumns()
         {
             var translationDict = new Dictionary<string, string>
             {
-                {"Produkt", "Product"},
-                {"Katalogové číslo", "Item"},
-                {"Popis alternativní", "Description"},
-                {"Balení karton (ks)", "Colli (pcs in carton)"},
-                {"Cena", "EXW CZ"},
-                {"Cena DMOC EUR", "RRP"},
-                {"K dispozici", "In stock"},
-                {"Bude k dispozici", "Stock coming"},
-                {"Výrobce", "Brand"},
-                {"Údaj 2", "Category"},
-                {"Údaj 1", "Product type"},
-                {"Země původu", "Country of origin"},
+                {Produkt, Product},
+                {KatalogoveCislo, Item},
+                {PopisAlternativni, Description},
+                {BaleníKartonKs, ColliPcsInCarton},
+                {Cena, ExwCz},
+                {CenaDmocEur, Rrp},
+                {KDispozici, InStock},
+                {BudeKDispozici, StockComing},
+                {Vyrobce, Brand},
+                {Udaj2, Category},
+                {Udaj1, ProductType},
+                {ZemePuvodu, CountryOfOrigin},
             };
 
             _columns = _columns.Select(col => translationDict.ContainsKey(col) ? translationDict[col] : col).ToList();
@@ -443,44 +487,44 @@ namespace ExcelOrderAddIn.Model
          */
         private void InsertWillBeAvailableColumn()
         {
-            _columns.Add("Will be available");
+            _columns.Add(WillBeAvailable);
             Data = Data
                 .Select(row => row.Append(
-                    Convert.ToInt32(row[_columns.IndexOf("Bude k dispozici")]) +
-                    Convert.ToInt32(row[_columns.IndexOf("OBJEDNÁNO")]) -
-                    Convert.ToInt32(row[_columns.IndexOf("DODAT")])
+                    Convert.ToInt32(row[_columns.IndexOf(BudeKDispozici)]) +
+                    Convert.ToInt32(row[_columns.IndexOf(Objednano)]) -
+                    Convert.ToInt32(row[_columns.IndexOf(Dodat)])
                 ))
                 .ToJaggedArray();
         }
 
         private void InsertThemeColumn()
         {
-            InsertEmptyColumn("Theme");
+            InsertEmptyColumn(Theme);
         }
 
         private void InsertNoteForStockColumn()
         {
-            InsertEmptyColumn("Note for stock");
+            InsertEmptyColumn(NoteForStock);
         }
 
         private void InsertTotalOrderColumn()
         {
-            InsertEmptyColumn("Total order");
+            InsertEmptyColumn(TotalOrder);
         }
 
         private void InsertOrderColumn()
         {
-            InsertEmptyColumn("Order");
+            InsertEmptyColumn(Order);
         }
 
         private void InsertNewColumn()
         {
-            InsertEmptyColumn("NEW");
+            InsertEmptyColumn(New);
         }
 
         private void InsertImageColumn()
         {
-            InsertEmptyColumn("Image");
+            InsertEmptyColumn(Image);
         }
 
         private void InsertEmptyColumn(string columnName)

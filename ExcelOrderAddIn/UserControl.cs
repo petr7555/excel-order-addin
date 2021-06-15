@@ -13,6 +13,8 @@ namespace ExcelOrderAddIn
 {
     public partial class UserControl : System.Windows.Forms.UserControl
     {
+        private const string GeneratedSheetName = "New Order";
+
         private IEnumerable<WorksheetItem> _worksheetItems;
 
         public UserControl()
@@ -66,8 +68,6 @@ namespace ExcelOrderAddIn
 
         /**
          * Main logic of add-in
-         * 
-         * TODO add asynchronous progress bar
          */
         private async void createBtn_Click(object sender, EventArgs e)
         {
@@ -141,11 +141,11 @@ namespace ExcelOrderAddIn
 
         private static string FindNewName()
         {
-            var newName = "New Order";
+            var newName = GeneratedSheetName;
             var i = 2;
             while (Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>().Any(ws => ws.Name == newName))
             {
-                newName = $"New Order {i++}";
+                newName = $"{GeneratedSheetName} {i++}";
             }
 
             return newName;
@@ -239,7 +239,7 @@ namespace ExcelOrderAddIn
 
         private void deleteGeneratedSheetsBtn_Click(object sender, EventArgs e)
         {
-            const string generatedSheetName = "New Order";
+            const string generatedSheetName = GeneratedSheetName;
             var generatedSheets = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>()
                 .Where(ws => ws.Name.StartsWith(generatedSheetName));
             DeleteWorksheets(generatedSheets);
@@ -247,7 +247,7 @@ namespace ExcelOrderAddIn
 
         private void deleteNotGeneratedSheetsBtn_Click(object sender, EventArgs e)
         {
-            const string generatedSheetName = "New Order";
+            const string generatedSheetName = GeneratedSheetName;
             var notGeneratedSheets = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>()
                 .Where(ws => !ws.Name.StartsWith(generatedSheetName));
             DeleteWorksheets(notGeneratedSheets);
@@ -259,18 +259,21 @@ namespace ExcelOrderAddIn
 
             if (count == 0)
             {
-                MessageBox.Show($"No sheets to be deleted.", "No sheets", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"No sheets to be deleted.", "No sheets", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
                 return;
             }
 
-            if (MessageBox.Show($"Do you really want to delete the following {count} sheet{(count > 1 ? "s" : "")}: {string.Join(", ", worksheets.Select(ws => ws.Name))}?", 
+            if (MessageBox.Show(
+                $"Do you really want to delete the following {count} sheet{(count > 1 ? "s" : "")}: {string.Join(", ", worksheets.Select(ws => ws.Name))}?",
                 "Confirm deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
             var allSheetsCount = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>().Count();
 
             if (count == allSheetsCount)
             {
-                MessageBox.Show($"Cannot delete all sheets.", "Invalid operation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Cannot delete all sheets.", "Invalid operation", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
 
