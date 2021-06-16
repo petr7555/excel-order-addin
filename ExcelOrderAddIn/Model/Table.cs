@@ -301,7 +301,7 @@ namespace ExcelOrderAddIn.Model
             {
                 {Produkt, ColumnImportance.Mandatory},
                 {KatalogoveCislo, ColumnImportance.Mandatory},
-                {PopisAlternativni, ColumnImportance.Mandatory},
+                {PopisAlternativni, ColumnImportance.Optional},
                 {BaleníKartonKs, ColumnImportance.Optional},
                 {Cena, ColumnImportance.Mandatory},
                 {CenaDmocEur, ColumnImportance.Mandatory},
@@ -311,7 +311,7 @@ namespace ExcelOrderAddIn.Model
                 {UdajSklad1, ColumnImportance.Mandatory},
                 {Udaj1, ColumnImportance.Mandatory},
                 {Udaj2, ColumnImportance.Mandatory},
-                {Objednano, ColumnImportance.Mandatory},
+                {Objednano, ColumnImportance.Optional},
                 {Dodat, ColumnImportance.Mandatory},
                 {ZemePuvodu, ColumnImportance.Optional},
             };
@@ -446,15 +446,9 @@ namespace ExcelOrderAddIn.Model
 
         internal void RemoveUnavailableProducts()
         {
-            var budeKDispoziciIdx = _columns.IndexOf(BudeKDispozici);
-            if (budeKDispoziciIdx == -1)
-            {
-                MessageBox.Show(
-                    $"Data do not contain \"{BudeKDispozici}\" column, unavailable products won't be removed.",
-                    "Missing column", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            if (WarnIfColumnIsMissing(BudeKDispozici, "unavailable products won't be removed")) return;
 
+            var budeKDispoziciIdx = GetColumnIndex(BudeKDispozici);
             var udajSklad1Idx = GetColumnIndex(UdajSklad1);
 
             Data = Data
@@ -541,24 +535,36 @@ namespace ExcelOrderAddIn.Model
             InsertWillBeAvailableColumn();
         }
 
+        private bool WarnIfColumnIsMissing(string columnName, string effect)
+        {
+            if (ColumnIsMissing(columnName))
+            {
+                MessageBox.Show(
+                    $"Data do not contain \"{columnName}\" column, {effect}.",
+                    "Missing column", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            return true;
+        }
+
         /**
          * "Bude bude"
          */
         private void InsertWillBeAvailableColumn()
         {
-            var budeKDispoziciIdx = _columns.IndexOf(BudeKDispozici);
-            if (budeKDispoziciIdx == -1)
+            bool WarnIfColumnIsMissingWithMsg(string columnName)
             {
-                MessageBox.Show(
-                    $"Data do not contain \"{BudeKDispozici}\" column, \"Will be available column\" won't be added.",
-                    "Missing column", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                return WarnIfColumnIsMissing(columnName, "\"Will be available column\" won't be added");
             }
+
+            if (WarnIfColumnIsMissingWithMsg(BudeKDispozici)) return;
+            if (WarnIfColumnIsMissingWithMsg(Objednano)) return;
+            if (WarnIfColumnIsMissingWithMsg(Dodat)) return;
 
             _columns.Add(WillBeAvailable);
             Data = Data
                 .Select(row => row.Append(
-                    Convert.ToInt32(row[budeKDispoziciIdx]) +
+                    Convert.ToInt32(row[GetColumnIndex(BudeKDispozici)]) +
                     Convert.ToInt32(row[GetColumnIndex(Objednano)]) -
                     Convert.ToInt32(row[GetColumnIndex(Dodat)])
                 ))
