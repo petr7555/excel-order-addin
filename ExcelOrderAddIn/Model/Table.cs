@@ -298,15 +298,15 @@ namespace ExcelOrderAddIn.Model
         private void InsertTotalOrderFormula(Excel.Worksheet worksheet, int topOffset)
         {
             var totalOrderIndex = GetColumnIndex(TotalOrder) + 1;
-            var priceIndex = GetColumnIndex(ExwCz) + 1;
-            var orderIndex = GetColumnIndex(Order) + 1;
+            var priceColLetter = (GetColumnIndex(ExwCz) + 1).ToLetter();
+            var orderColLetter = (GetColumnIndex(Order) + 1).ToLetter();
 
             Parallel.For(0, NRows, i =>
             {
                 var row = topOffset + 2 + i;
                 worksheet.Cells[row, totalOrderIndex].Formula =
-                    $"={priceIndex.ToLetter()}{row}*" +
-                    $"{orderIndex.ToLetter()}{row}";
+                    $"={priceColLetter}{row}*" +
+                    $"{orderColLetter}{row}";
             });
         }
 
