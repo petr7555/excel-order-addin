@@ -30,6 +30,7 @@ namespace ExcelOrderAddIn.Model
         // Quotes are escaped by doubling them both in VB and regex.
         private const string AccountingFormat =
             @"_([$€-x-euro2] * #,##0.00_);_([$€-x-euro2] * (#,##0.00);_([$€-x-euro2] * ""-""??_);_(@_)";
+
         private const string IntegerFormat = "0";
         private const string TextFormat = "@";
 
@@ -173,29 +174,44 @@ namespace ExcelOrderAddIn.Model
 
         private void FormatWillBeAvailableColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(WillBeAvailable)) return;
+
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, WillBeAvailable);
             FormatColumnAsInteger(worksheet, topOffset, StockComing);
         }
 
+        private bool ColumnIsMissing(string columnName)
+        {
+            return _columns.IndexOf(columnName) == -1;
+        }
+
         private void FormatInStockColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(InStock)) return;
+
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.SalmonBold, InStock);
             FormatColumnAsInteger(worksheet, topOffset, InStock);
         }
 
         private void FormatRrpColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(Rrp)) return;
+
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.BoldText, Rrp);
             FormatColumnAsAccounting(worksheet, topOffset, Rrp);
         }
 
         private void FormatExwCzColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(ExwCz)) return;
+
             FormatColumnAsAccounting(worksheet, topOffset, ExwCz);
         }
 
         private void FormatNewColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(New)) return;
+
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.RedBoldText, New);
 
             var colIndex = GetColumnIndex(New) + 1;
@@ -205,39 +221,53 @@ namespace ExcelOrderAddIn.Model
 
         private void FormatColliColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(ColliPcsInCarton)) return;
+
             FormatColumnAsInteger(worksheet, topOffset, ColliPcsInCarton);
         }
 
         private void FormatNoteForStockColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(NoteForStock)) return;
+
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, NoteForStock);
             FormatColumnAsText(worksheet, topOffset, NoteForStock);
         }
 
         private void FormatStockComingColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(StockComing)) return;
+
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Yellow, StockComing);
             FormatColumnAsInteger(worksheet, topOffset, StockComing);
         }
 
-        private static void FormatImageColumn(Excel.Worksheet worksheet)
+        private void FormatImageColumn(Excel.Worksheet worksheet)
         {
+            if (ColumnIsMissing(Image)) return;
+
             // Make column wider
             worksheet.Columns[1].ColumnWidth = ImgColWidth;
         }
 
         private void FormatOrderColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(Order)) return;
+
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Input, Order);
         }
 
         private void FormatEanColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(Ean)) return;
+
             FormatColumnAsInteger(worksheet, topOffset, Ean);
         }
 
         private void FormatTotalOrderColumn(Excel.Worksheet worksheet, int topOffset)
         {
+            if (ColumnIsMissing(TotalOrder)) return;
+
             ApplyStyleToColumn(worksheet, topOffset, Styling.Style.Calculation, TotalOrder);
             InsertTotalOrderFormula(worksheet, topOffset);
             FormatColumnAsAccounting(worksheet, topOffset, TotalOrder);
@@ -264,19 +294,19 @@ namespace ExcelOrderAddIn.Model
         internal void CheckAvailableColumns()
         {
             // Further methods rely on some columns to exist.
-            // Make sure the column is not needed for other methods
-            // before making it optional.
+            // Make sure the column is not needed for other methods before making it optional.
+            // Or handle its absence in the other methods.
             // TODO Could be configurable
             var importanceDict = new Dictionary<string, ColumnImportance>
             {
                 {Produkt, ColumnImportance.Mandatory},
                 {KatalogoveCislo, ColumnImportance.Mandatory},
                 {PopisAlternativni, ColumnImportance.Mandatory},
-                {BaleníKartonKs, ColumnImportance.Mandatory},
+                {BaleníKartonKs, ColumnImportance.Optional},
                 {Cena, ColumnImportance.Mandatory},
                 {CenaDmocEur, ColumnImportance.Mandatory},
                 {KDispozici, ColumnImportance.Mandatory},
-                {BudeKDispozici, ColumnImportance.Mandatory},
+                {BudeKDispozici, ColumnImportance.Optional},
                 {Vyrobce, ColumnImportance.Mandatory},
                 {UdajSklad1, ColumnImportance.Mandatory},
                 {Udaj1, ColumnImportance.Mandatory},
@@ -291,7 +321,7 @@ namespace ExcelOrderAddIn.Model
             if (notFoundColumns.Count > 0)
             {
                 throw new InvalidDataException(
-                    $"Data do not contain the following columns: {string.Join(", ", notFoundColumns)}.");
+                    $"Data do not contain the following columns: {string.Join(", ", notFoundColumns.Select(col => col.Key))}.");
             }
         }
 
@@ -408,7 +438,7 @@ namespace ExcelOrderAddIn.Model
             if (columnIdx == -1)
             {
                 throw new ProgrammerErrorException(
-                    $"Data do not contain {columnName} column, this should have been checked before.");
+                    $"Data do not contain \"{columnName}\" column, this should have been checked before.");
             }
 
             return columnIdx;
@@ -416,7 +446,15 @@ namespace ExcelOrderAddIn.Model
 
         internal void RemoveUnavailableProducts()
         {
-            var budeKDispoziciIdx = GetColumnIndex(BudeKDispozici);
+            var budeKDispoziciIdx = _columns.IndexOf(BudeKDispozici);
+            if (budeKDispoziciIdx == -1)
+            {
+                MessageBox.Show(
+                    $"Data do not contain \"{BudeKDispozici}\" column, unavailable products won't be removed.",
+                    "Missing column", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             var udajSklad1Idx = GetColumnIndex(UdajSklad1);
 
             Data = Data
@@ -508,10 +546,19 @@ namespace ExcelOrderAddIn.Model
          */
         private void InsertWillBeAvailableColumn()
         {
+            var budeKDispoziciIdx = _columns.IndexOf(BudeKDispozici);
+            if (budeKDispoziciIdx == -1)
+            {
+                MessageBox.Show(
+                    $"Data do not contain \"{BudeKDispozici}\" column, \"Will be available column\" won't be added.",
+                    "Missing column", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             _columns.Add(WillBeAvailable);
             Data = Data
                 .Select(row => row.Append(
-                    Convert.ToInt32(row[GetColumnIndex(BudeKDispozici)]) +
+                    Convert.ToInt32(row[budeKDispoziciIdx]) +
                     Convert.ToInt32(row[GetColumnIndex(Objednano)]) -
                     Convert.ToInt32(row[GetColumnIndex(Dodat)])
                 ))
