@@ -38,6 +38,7 @@ namespace ExcelOrderAddIn.Model
         private const string Produkt = "Produkt";
         private const string KatalogoveCislo = "Katalogové číslo";
         private const string PopisAlternativni = "Popis alternativní";
+        private const string Popis = "Popis";
         private const string BaleníKartonKs = "Balení karton (ks)";
         private const string Cena = "Cena";
         private const string CenaDmocEur = "Cena DMOC EUR";
@@ -51,6 +52,7 @@ namespace ExcelOrderAddIn.Model
         private const string Product = "Product";
         private const string Item = "Item";
         private const string Description = "Description";
+        private const string Description2 = "Description 2";
         private const string ColliPcsInCarton = "Colli (pcs in carton)";
         private const string ExwCz = "EXW CZ";
         private const string Rrp = "RRP";
@@ -302,6 +304,7 @@ namespace ExcelOrderAddIn.Model
                 {Produkt, ColumnImportance.Mandatory},
                 {KatalogoveCislo, ColumnImportance.Mandatory},
                 {PopisAlternativni, ColumnImportance.Optional},
+                {Popis, ColumnImportance.Optional},
                 {BaleníKartonKs, ColumnImportance.Optional},
                 {Cena, ColumnImportance.Mandatory},
                 {CenaDmocEur, ColumnImportance.Mandatory},
@@ -395,7 +398,7 @@ namespace ExcelOrderAddIn.Model
 
                 // image names are values in the 'Item' column
                 var imgNames = Data
-                    .Select(row => row[GetColumnIndex(Item)] as string);
+                    .Select(row => row[GetColumnIndex(Item)].ToString());
 
                 var imgIdx = 0;
                 foreach (var imgName in imgNames)
@@ -471,6 +474,7 @@ namespace ExcelOrderAddIn.Model
                 Item,
                 Ean,
                 Description,
+                Description2,
                 ColliPcsInCarton,
                 New,
                 ExwCz,
@@ -510,6 +514,7 @@ namespace ExcelOrderAddIn.Model
                 {Produkt, Product},
                 {KatalogoveCislo, Item},
                 {PopisAlternativni, Description},
+                {Popis, Description2},
                 {BaleníKartonKs, ColliPcsInCarton},
                 {Cena, ExwCz},
                 {CenaDmocEur, Rrp},
