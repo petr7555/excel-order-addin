@@ -102,8 +102,8 @@ namespace ExcelOrderAddIn.Model
             // Join data on id columns, merge all columns (including the id column)
             var joinedData = Data
                 .Join(rightTable.Data,
-                    leftRow => leftRow.ElementAt(leftIdColIdx),
-                    rightRow => rightRow.ElementAt(rightIdColIdx),
+                    leftRow => leftRow.ElementAt(leftIdColIdx).ToString(),
+                    rightRow => rightRow.ElementAt(rightIdColIdx).ToString(),
                     (leftRow, rightRow) => leftRow.Concat(rightRow));
 
             // Columns in the right table that are already in the left table
@@ -396,6 +396,10 @@ namespace ExcelOrderAddIn.Model
             {
                 const int defaultRowSize = 15;
 
+                // For some reason, row height is actually smaller than what is set.
+                // E.g. when row height is 76, the second image needs to start at 75.75 (76 - 0.25) from top, instead of 76.
+                const float weirdExcelShift = 0.25f;
+
                 // image names are values in the 'Item' column
                 var imgNames = Data
                     .Select(row => row[GetColumnIndex(Item)].ToString());
@@ -406,7 +410,7 @@ namespace ExcelOrderAddIn.Model
                     if (FindImagePath(imgFolder, imgName, out var imgPath))
                     {
                         worksheet.Shapes.AddPicture(imgPath, MsoTriState.msoFalse, MsoTriState.msoCTrue, 0,
-                            (topOffset + 1) * defaultRowSize + ImgColHeight * imgIdx + (ImgColHeight - ImgSize) / 2,
+                            (topOffset + 1) * defaultRowSize + (ImgColHeight - weirdExcelShift) * imgIdx + (ImgColHeight - ImgSize) / 2,
                             ImgSize, ImgSize);
                     }
 
