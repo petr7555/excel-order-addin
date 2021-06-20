@@ -410,7 +410,8 @@ namespace ExcelOrderAddIn.Model
                     if (FindImagePath(imgFolder, imgName, out var imgPath))
                     {
                         worksheet.Shapes.AddPicture(imgPath, MsoTriState.msoFalse, MsoTriState.msoCTrue, 0,
-                            (topOffset + 1) * defaultRowSize + (ImgColHeight - weirdExcelShift) * imgIdx + (ImgColHeight - ImgSize) / 2,
+                            (topOffset + 1) * defaultRowSize + (ImgColHeight - weirdExcelShift) * imgIdx +
+                            (ImgColHeight - ImgSize) / 2,
                             ImgSize, ImgSize);
                     }
 
