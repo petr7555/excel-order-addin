@@ -301,21 +301,23 @@ namespace ExcelOrderAddIn.Model
             // TODO Could be configurable
             var importanceDict = new Dictionary<string, ColumnImportance>
             {
+                // MANDATORY
                 {Produkt, ColumnImportance.Mandatory},
                 {KatalogoveCislo, ColumnImportance.Mandatory},
-                {PopisAlternativni, ColumnImportance.Optional},
-                {Popis, ColumnImportance.Optional},
-                {BaleníKartonKs, ColumnImportance.Optional},
                 {Cena, ColumnImportance.Mandatory},
                 {CenaDmocEur, ColumnImportance.Mandatory},
                 {KDispozici, ColumnImportance.Mandatory},
-                {BudeKDispozici, ColumnImportance.Optional},
                 {Vyrobce, ColumnImportance.Mandatory},
-                {UdajSklad1, ColumnImportance.Mandatory},
                 {Udaj1, ColumnImportance.Mandatory},
                 {Udaj2, ColumnImportance.Mandatory},
+                // OPTIONAL
+                {UdajSklad1, ColumnImportance.Optional},
+                {PopisAlternativni, ColumnImportance.Optional},
+                {Popis, ColumnImportance.Optional},
+                {BaleníKartonKs, ColumnImportance.Optional},
+                {BudeKDispozici, ColumnImportance.Optional},
                 {Objednano, ColumnImportance.Optional},
-                {Dodat, ColumnImportance.Mandatory},
+                {Dodat, ColumnImportance.Optional},
                 {ZemePuvodu, ColumnImportance.Optional},
             };
 
@@ -455,6 +457,7 @@ namespace ExcelOrderAddIn.Model
         internal void RemoveUnavailableProducts()
         {
             if (WarnIfColumnIsMissing(BudeKDispozici, "unavailable products won't be removed")) return;
+            if (WarnIfColumnIsMissing(UdajSklad1, "unavailable products won't be removed")) return;
 
             var budeKDispoziciIdx = GetColumnIndex(BudeKDispozici);
             var udajSklad1Idx = GetColumnIndex(UdajSklad1);
