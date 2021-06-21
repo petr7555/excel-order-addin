@@ -550,13 +550,10 @@ namespace ExcelOrderAddIn.Model
 
         private bool WarnIfColumnIsMissing(string columnName, string effect)
         {
-            if (ColumnIsMissing(columnName))
-            {
-                MessageBox.Show(
-                    $"Data do not contain \"{columnName}\" column, {effect}.",
-                    "Missing column", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
+            if (!ColumnIsMissing(columnName)) return false;
+            MessageBox.Show(
+                $"Data do not contain \"{columnName}\" column, {effect}.",
+                "Missing column", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return true;
         }
 
