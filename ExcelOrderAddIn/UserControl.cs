@@ -107,7 +107,9 @@ namespace ExcelOrderAddIn
                 await joined.InsertImages(newWorksheet, topOffset, imgFolderTextBox.Text);
 
                 UpdateProgress(100, "Done.");
-                MessageBox.Show($"{joined.Data.GetLength(0)} rows created.", "Success!", MessageBoxButtons.OK,
+                var countOfRows = joined.Data.GetLength(0);
+                MessageBox.Show($"{countOfRows} row{(countOfRows == 1 ? "" : "s")} created.", "Success!",
+                    MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -265,7 +267,7 @@ namespace ExcelOrderAddIn
             }
 
             if (MessageBox.Show(
-                $"Do you really want to delete the following {count} sheet{(count > 1 ? "s" : "")}: {string.Join(", ", worksheets.Select(ws => ws.Name))}?",
+                $"Do you really want to delete the following {count} sheet{(count == 1 ? "" : "s")}: {string.Join(", ", worksheets.Select(ws => ws.Name))}?",
                 "Confirm deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
             var allSheetsCount = Globals.ThisAddIn.Application.Worksheets.OfType<Excel.Worksheet>().Count();
@@ -285,7 +287,8 @@ namespace ExcelOrderAddIn
 
             Globals.ThisAddIn.Application.Application.DisplayAlerts = true;
 
-            MessageBox.Show($"{count} sheets have been deleted.", "Success!", MessageBoxButtons.OK,
+            MessageBox.Show($"{count} sheet{(count == 1 ? "" : "s")} have been deleted.", "Success!",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
 
