@@ -287,7 +287,7 @@ namespace ExcelOrderAddIn
 
             Globals.ThisAddIn.Application.Application.DisplayAlerts = true;
 
-            MessageBox.Show($"{count} sheet{(count == 1 ? "" : "s")} have been deleted.", "Success!",
+            MessageBox.Show($"{count} sheet{(count == 1 ? "" : "s")} {(count == 1 ? "has" : "have")} been deleted.", "Success!",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
