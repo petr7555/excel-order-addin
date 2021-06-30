@@ -84,6 +84,8 @@ namespace ExcelOrderAddIn
                 var table3 = Table.FromComboBoxes(table3ComboBox, idCol3ComboBox);
 
                 var newWorksheet = CreateNewWorksheet();
+                // just in case it was protected
+                newWorksheet.Unprotect();
 
                 var joined = table1.Join(table2).Join(table3);
 
