@@ -11,11 +11,15 @@ namespace ExcelOrderAddIn
         private static readonly Color Salmon = ColorTranslator.FromHtml("#FCE4D6");
         private static readonly Color Yellow = ColorTranslator.FromHtml("#FFF2CC");
         private static readonly Color Red = ColorTranslator.FromHtml("#FF0000");
+        private static readonly Color Purple = ColorTranslator.FromHtml("#3F3F76");
+        private static readonly Color LightOrange = ColorTranslator.FromHtml("#FFCC99");
+        private static readonly Color Orange = ColorTranslator.FromHtml("#FA7D00");
+        private static readonly Color LightPink = ColorTranslator.FromHtml("#F2F2F2");
 
         public enum Style
         {
-            Calculation, // Exists in Excel by default
-            Input, // Exists in Excel by default
+            Calculation,
+            Input,
             Header,
             SalmonBold,
             Yellow,
@@ -59,14 +63,22 @@ namespace ExcelOrderAddIn
 
         private static void ApplyCalculation(Excel.Range range)
         {
-            range.Style = "Calculation";
+            const string styleName = "Calculation_addin";
+            new StyleBuilder(styleName)
+                .WithBackgroundColor(LightPink)
+                .WithTextColor(Orange)
+                .WithBold();
+            range.Style = styleName;
         }
 
         private static void ApplyInput(Excel.Range range)
         {
-            range.Style = "Input";
+            const string styleName = "Input_addin";
+            new StyleBuilder(styleName)
+                .WithBackgroundColor(LightOrange)
+                .WithTextColor(Purple);
+            range.Style = styleName;
         }
-
 
         private static void ApplyHeader(Excel.Range range)
         {
