@@ -144,8 +144,7 @@ namespace ExcelOrderAddIn
                 {
                     _style = Globals.ThisAddIn.Application.ActiveWorkbook.Styles.Add(styleName);
                 }
-                catch (COMException e) when (e.Message ==
-                                             "Add method of Styles class failed")
+                catch (COMException)
                 {
                 }
             }
