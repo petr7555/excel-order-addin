@@ -56,6 +56,9 @@ namespace ExcelOrderAddIn
             this.imgFolderTextBox = new System.Windows.Forms.TextBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.progressBarLabel = new System.Windows.Forms.Label();
+            this.logsLabel = new System.Windows.Forms.Label();
+            this.timer = new System.Windows.Forms.Timer(this.components);
+            this.scrollingRichTextBox = new ExcelOrderAddIn.ScrollingRichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -298,16 +301,41 @@ namespace ExcelOrderAddIn
             // progressBarLabel
             // 
             this.progressBarLabel.AutoSize = true;
-            this.progressBarLabel.Location = new System.Drawing.Point(14, 193);
+            this.progressBarLabel.Location = new System.Drawing.Point(11, 190);
             this.progressBarLabel.Name = "progressBarLabel";
             this.progressBarLabel.Size = new System.Drawing.Size(0, 13);
             this.progressBarLabel.TabIndex = 21;
+            // 
+            // logsLabel
+            // 
+            this.logsLabel.AutoSize = true;
+            this.logsLabel.Location = new System.Drawing.Point(11, 217);
+            this.logsLabel.Name = "logsLabel";
+            this.logsLabel.Size = new System.Drawing.Size(33, 13);
+            this.logsLabel.TabIndex = 23;
+            this.logsLabel.Text = "Logs:";
+            // 
+            // timer
+            // 
+            this.timer.Interval = 500;
+            this.timer.Tick += new System.EventHandler(this.TimeUpdateLogWindow_Tick);
+            // 
+            // scrollingRichTextBox
+            // 
+            this.scrollingRichTextBox.Enabled = false;
+            this.scrollingRichTextBox.Location = new System.Drawing.Point(14, 234);
+            this.scrollingRichTextBox.Name = "scrollingRichTextBox";
+            this.scrollingRichTextBox.Size = new System.Drawing.Size(382, 127);
+            this.scrollingRichTextBox.TabIndex = 24;
+            this.scrollingRichTextBox.Text = "";
             // 
             // UserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
+            this.Controls.Add(this.scrollingRichTextBox);
+            this.Controls.Add(this.logsLabel);
             this.Controls.Add(this.progressBarLabel);
             this.Controls.Add(this.createBtn);
             this.Controls.Add(this.progressBar);
@@ -363,5 +391,8 @@ namespace ExcelOrderAddIn
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label progressBarLabel;
         private System.Windows.Forms.Button deleteNotGeneratedSheetsBtn;
+        private System.Windows.Forms.Label logsLabel;
+        private ScrollingRichTextBox scrollingRichTextBox;
+        private System.Windows.Forms.Timer timer;
     }
 }

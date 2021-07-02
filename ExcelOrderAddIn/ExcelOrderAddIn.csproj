@@ -33,7 +33,7 @@
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>0.1.6.1</ApplicationVersion>
+    <ApplicationVersion>0.1.8.1</ApplicationVersion>
     <AutoIncrementApplicationRevision>false</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -184,6 +184,7 @@
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\WorksheetExtensions.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Model\Table.cs" />
     <Compile Include="Model\WorksheetItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -194,6 +195,9 @@
     </Compile>
     <Compile Include="Ribbon.Designer.cs">
       <DependentUpon>Ribbon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScrollingRichTextBox.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Styling.cs" />
     <Compile Include="UserControl.cs">

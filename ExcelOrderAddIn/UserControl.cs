@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 // ReSharper disable once RedundantUsingDirective
 using ExcelOrderAddIn.Extensions;
+using ExcelOrderAddIn.Logging;
 using ExcelOrderAddIn.Model;
 using ExcelOrderAddIn.Properties;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -16,6 +17,7 @@ namespace ExcelOrderAddIn
         private const string GeneratedSheetName = "New Order";
 
         private IEnumerable<WorksheetItem> _worksheetItems;
+        private Logger _logger = new Logger(100u);
 
         public UserControl()
         {
@@ -79,11 +81,17 @@ namespace ExcelOrderAddIn
 
             try
             {
+                // Start the timer that updates logs
+                timer.Enabled = true;
+
                 var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
                 var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
                 var table3 = Table.FromComboBoxes(table3ComboBox, idCol3ComboBox);
 
+                _logger.Info("Creating new worksheet.");
                 var newWorksheet = CreateNewWorksheet();
+                _logger.Info("Worksheet created.");
+
                 // just in case it was protected
                 newWorksheet.Unprotect();
 
@@ -123,6 +131,9 @@ namespace ExcelOrderAddIn
             finally
             {
                 Globals.ThisAddIn.Application.Interactive = true;
+                timer.Enabled = false;
+                // Print remaining logs
+                UpdateLogWindow();
             }
         }
 
@@ -257,7 +268,7 @@ namespace ExcelOrderAddIn
             DeleteWorksheets(notGeneratedSheets);
         }
 
-        private void DeleteWorksheets(IEnumerable<Excel.Worksheet> worksheets)
+        private static void DeleteWorksheets(IEnumerable<Excel.Worksheet> worksheets)
         {
             var count = worksheets.Count();
 
@@ -289,7 +300,8 @@ namespace ExcelOrderAddIn
 
             Globals.ThisAddIn.Application.Application.DisplayAlerts = true;
 
-            MessageBox.Show($"{count} sheet{(count == 1 ? "" : "s")} {(count == 1 ? "has" : "have")} been deleted.", "Success!",
+            MessageBox.Show($"{count} sheet{(count == 1 ? "" : "s")} {(count == 1 ? "has" : "have")} been deleted.",
+                "Success!",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
@@ -323,6 +335,20 @@ namespace ExcelOrderAddIn
         private void refreshBtn_Click(object sender, EventArgs e)
         {
             RefreshItems();
+        }
+
+        private void TimeUpdateLogWindow_Tick(object sender, EventArgs e)
+        {
+            UpdateLogWindow();
+        }
+
+        private void UpdateLogWindow()
+        {
+            BeginInvoke(new Action(() =>
+            {
+                scrollingRichTextBox.Rtf = _logger.GetLogAsRichText(false);
+                scrollingRichTextBox.ScrollToBottom();
+            }));
         }
     }
 }
