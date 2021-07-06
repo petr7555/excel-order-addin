@@ -322,9 +322,9 @@ namespace ExcelOrderAddIn
             // 
             // scrollingRichTextBox
             // 
-            this.scrollingRichTextBox.Enabled = false;
             this.scrollingRichTextBox.Location = new System.Drawing.Point(14, 234);
             this.scrollingRichTextBox.Name = "scrollingRichTextBox";
+            this.scrollingRichTextBox.ReadOnly = true;
             this.scrollingRichTextBox.Size = new System.Drawing.Size(382, 127);
             this.scrollingRichTextBox.TabIndex = 24;
             this.scrollingRichTextBox.Text = "";
