@@ -84,9 +84,9 @@ namespace ExcelOrderAddIn
                 // Start the timer that updates logs
                 timer.Enabled = true;
 
-                var table1 = Table.FromComboBoxes(table1ComboBox, idCol1ComboBox);
-                var table2 = Table.FromComboBoxes(table2ComboBox, idCol2ComboBox);
-                var table3 = Table.FromComboBoxes(table3ComboBox, idCol3ComboBox);
+                var table1 = Table.FromComboBoxes(_logger, table1ComboBox, idCol1ComboBox);
+                var table2 = Table.FromComboBoxes(_logger, table2ComboBox, idCol2ComboBox);
+                var table3 = Table.FromComboBoxes(_logger, table3ComboBox, idCol3ComboBox);
 
                 _logger.Info("Creating new worksheet.");
                 var newWorksheet = CreateNewWorksheet();

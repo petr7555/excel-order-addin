@@ -5,10 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExcelOrderAddIn.Exceptions;
 using ExcelOrderAddIn.Extensions;
+using ExcelOrderAddIn.Logging;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn.Model
@@ -30,6 +32,7 @@ namespace ExcelOrderAddIn.Model
         // Quotes are escaped by doubling them both in VB and regex.
         private const string AccountingFormat =
             @"_([$€-x-euro2] * #,##0.00_);_([$€-x-euro2] * (#,##0.00);_([$€-x-euro2] * ""-""??_);_(@_)";
+        private const string AccountingFormatOld = @"_ * #,##0.00_  [$€-x-euro1]_ ;_ * -#,##0.00  [$€-x-euro1]_ ;_ * ""-""??_  [$€-x-euro1]_ ;_ @_ ";
 
         private const string IntegerFormat = "0";
         private const string TextFormat = "@";
@@ -75,7 +78,8 @@ namespace ExcelOrderAddIn.Model
 
         private IList<string> _columns;
         public object[][] Data = new object[0][];
-        private string _idCol;
+        private readonly string _idCol;
+        private readonly Logger _logger;
 
         private int NCols => _columns.Count;
 
@@ -83,15 +87,17 @@ namespace ExcelOrderAddIn.Model
 
         private int IdColIdx => _columns.IndexOf(_idCol);
 
-        private Table()
+        private Table(Logger logger, IList<string> columns, string idCol)
         {
+            _logger = logger;
+            _columns = columns;
+            _idCol = idCol;
         }
 
-        private Table(IList<string> columns, object[][] data, string idCol)
+        private Table(Logger logger, IList<string> columns, string idCol, object[][] data) : this(logger, columns,
+            idCol)
         {
-            _columns = columns;
             Data = data;
-            _idCol = idCol;
         }
 
         public Table Join(Table rightTable)
@@ -120,7 +126,7 @@ namespace ExcelOrderAddIn.Model
 
             var newCols = _columns.Union(rightTable._columns).ToList();
 
-            return new Table(newCols, filteredData.ToJaggedArray(), _idCol);
+            return new Table(_logger, newCols, _idCol, filteredData.ToJaggedArray());
         }
 
         internal async Task PrintToWorksheet(Excel.Worksheet worksheet, int topOffset = 0)
@@ -378,7 +384,25 @@ namespace ExcelOrderAddIn.Model
             // Assumes that 'Total order' follows directly after 'Order'
             var totalPriceCell = worksheet.Cells[1, orderColIndex + 1];
             Styling.Apply(totalPriceCell, Styling.Style.Calculation);
-            totalPriceCell.NumberFormat = AccountingFormat;
+            var cell = $"[{ 1},{ orderColIndex + 1}]";
+
+            try
+            {
+                _logger.Info($"Setting number format of cell {cell} to {AccountingFormat}.");
+                totalPriceCell.NumberFormat = AccountingFormat;
+            }
+            catch(COMException)
+            {
+                _logger.Error($"Setting number format of cell {cell} to {AccountingFormat} FAILED.");
+                try
+                {
+                    _logger.Info($"Setting number format of cell {cell} to {AccountingFormatOld} instead.");
+                } catch (COMException)
+                {
+                    _logger.Error($"Setting number format of cell {cell} to {AccountingFormatOld} FAILED.");
+                    _logger.Info($"Setting number format of cell {cell} to {IntegerFormat} instead.");
+                }
+            }
             totalPriceCell.Formula = "=SUM(" +
                                      $"{(orderColIndex + 1).ToLetter()}{topOffset + 2}:" +
                                      $"{(orderColIndex + 1).ToLetter()}{topOffset + 1 + NRows})";
@@ -619,16 +643,17 @@ namespace ExcelOrderAddIn.Model
                 .ToJaggedArray();
         }
 
-        internal static Table FromComboBoxes(ComboBox tableComboBox, ComboBox idColComboBox)
+        internal static Table FromComboBoxes(Logger logger, ComboBox tableComboBox, ComboBox idColComboBox)
         {
             var worksheet = ((WorksheetItem) tableComboBox.SelectedItem).Worksheet;
             var idCol = idColComboBox.SelectedItem as string;
 
             var table = new Table
-            {
-                _idCol = idCol,
-                _columns = worksheet.GetColumnNames()
-            };
+            (
+                logger,
+                worksheet.GetColumnNames(),
+                idCol
+            );
 
             var nCols = worksheet.NCols();
             var nRows = worksheet.NRows();

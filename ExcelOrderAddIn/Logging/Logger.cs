@@ -70,17 +70,25 @@ namespace ExcelOrderAddIn.Logging
         }
 
         /**
-         * Adds text as a log entry.
+         * Adds text as a INFO log entry.
          */
         public void Info(string text)
         {
             AddToLog(text, _defaultColor);
         }
+        
+        /**
+         * Adds text as an ERROR log entry.
+         */
+        public void Error(string text)
+        {
+            AddToLog(text, Color.Red);
+        }
 
         /**
          * Adds text as a log entry, and specifies a color to display it in.
          */
-        public void AddToLog(string text, Color entryColor)
+        private void AddToLog(string text, Color entryColor)
         {
             lock (_logLock)
             {
