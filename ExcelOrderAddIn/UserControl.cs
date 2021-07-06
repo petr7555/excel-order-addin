@@ -92,9 +92,6 @@ namespace ExcelOrderAddIn
                 var newWorksheet = CreateNewWorksheet();
                 _logger.Info("Worksheet created.");
 
-                // just in case it was protected
-                newWorksheet.Unprotect();
-
                 var joined = table1.Join(table2).Join(table3);
 
                 joined.CheckAvailableColumns();
