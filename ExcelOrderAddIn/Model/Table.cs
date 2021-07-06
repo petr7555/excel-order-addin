@@ -563,7 +563,7 @@ namespace ExcelOrderAddIn.Model
         }
 
         /**
-         * "Bude bude"
+         * So called "Bude bude" column.
          */
         private void InsertWillBeAvailableColumn()
         {
@@ -644,7 +644,7 @@ namespace ExcelOrderAddIn.Model
                 return table;
             }
 
-            // skip header
+            // skip input table header
             var dataStartCell = worksheet.Cells[2, 1] as Excel.Range;
             var dataEndCell = worksheet.Cells[nRows + 1, nCols] as Excel.Range;
             table.Data = (worksheet.Range[dataStartCell, dataEndCell].Value2 as object[,]).FromExcelMultidimArray();

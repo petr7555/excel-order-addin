@@ -10,19 +10,21 @@ namespace ExcelOrderAddIn.Extensions
         public static int NCols(this Excel.Worksheet worksheet)
         {
             var n = 1;
-            while (worksheet.Cells[1, n++].Value2 != null)
+            while (worksheet.Cells[1, n].Value2 != null)
             {
+                n++;
             }
 
             return n - 2;
         }
 
-        // Excluding header
+        // Excluding input table header
         public static int NRows(this Excel.Worksheet worksheet)
         {
             var n = 2;
-            while (worksheet.Cells[n++, 1].Value2 != null)
+            while (worksheet.Cells[n, 1].Value2 != null)
             {
+                n++;
             }
 
             return n - 3;
