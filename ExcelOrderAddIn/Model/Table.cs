@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExcelOrderAddIn.Exceptions;
@@ -32,7 +31,6 @@ namespace ExcelOrderAddIn.Model
         // Quotes are escaped by doubling them both in VB and regex.
         private const string AccountingFormat =
             @"_([$€-x-euro2] * #,##0.00_);_([$€-x-euro2] * (#,##0.00);_([$€-x-euro2] * ""-""??_);_(@_)";
-        private const string AccountingFormatOld = @"_ * #,##0.00_  [$€-x-euro1]_ ;_ * -#,##0.00  [$€-x-euro1]_ ;_ * ""-""??_  [$€-x-euro1]_ ;_ @_ ";
 
         private const string IntegerFormat = "0";
         private const string TextFormat = "@";
@@ -382,27 +380,10 @@ namespace ExcelOrderAddIn.Model
                                 $"{orderColIndex.ToLetter()}{topOffset + 1 + NRows})";
 
             // Assumes that 'Total order' follows directly after 'Order'
-            var totalPriceCell = worksheet.Cells[1, orderColIndex + 1];
+            // Casting to Excel.Range makes AccountingFormat work
+            var totalPriceCell = worksheet.Cells[1, orderColIndex + 1] as Excel.Range;
             Styling.Apply(totalPriceCell, Styling.Style.Calculation);
-            var cell = $"[{ 1},{ orderColIndex + 1}]";
-
-            try
-            {
-                _logger.Info($"Setting number format of cell {cell} to {AccountingFormat}.");
-                totalPriceCell.NumberFormat = AccountingFormat;
-            }
-            catch(COMException)
-            {
-                _logger.Error($"Setting number format of cell {cell} to {AccountingFormat} FAILED.");
-                try
-                {
-                    _logger.Info($"Setting number format of cell {cell} to {AccountingFormatOld} instead.");
-                } catch (COMException)
-                {
-                    _logger.Error($"Setting number format of cell {cell} to {AccountingFormatOld} FAILED.");
-                    _logger.Info($"Setting number format of cell {cell} to {IntegerFormat} instead.");
-                }
-            }
+            totalPriceCell.NumberFormat = AccountingFormat;
             totalPriceCell.Formula = "=SUM(" +
                                      $"{(orderColIndex + 1).ToLetter()}{topOffset + 2}:" +
                                      $"{(orderColIndex + 1).ToLetter()}{topOffset + 1 + NRows})";

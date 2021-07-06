@@ -76,7 +76,7 @@ namespace ExcelOrderAddIn
             // 
             // label1
             // 
-            this.label1.Label = "Version: 0.1.9";
+            this.label1.Label = "Version: 0.2.0";
             this.label1.Name = "label1";
             // 
             // label2
