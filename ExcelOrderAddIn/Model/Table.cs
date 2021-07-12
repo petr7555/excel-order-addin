@@ -75,7 +75,7 @@ namespace ExcelOrderAddIn.Model
         private const string Theme = "Theme";
 
         private IList<string> _columns;
-        public object[][] Data = new object[0][];
+        internal object[][] Data = new object[0][];
         private readonly string _idCol;
         private readonly Logger _logger;
 
@@ -98,7 +98,7 @@ namespace ExcelOrderAddIn.Model
             Data = data;
         }
 
-        public Table Join(Table rightTable)
+        internal Table Join(Table rightTable)
         {
             var leftIdColIdx = IdColIdx;
             var rightIdColIdx = rightTable.IdColIdx;
@@ -469,10 +469,10 @@ namespace ExcelOrderAddIn.Model
 
             Data = Data
                 .Where(row => !(
-                    Convert.ToInt32(row[budeKDispoziciIdx]) == 0 &&
+                    (Convert.ToInt32(row[budeKDispoziciIdx]) == 0 &&
                     (Convert.ToString(row[udajSklad1Idx]).Contains("ukončeno") ||
                      Convert.ToString(row[udajSklad1Idx]).Contains("doprodej")
-                    ) || Convert.ToString(row[udajSklad1Idx]).Contains("POS")
+                    )) || Convert.ToString(row[udajSklad1Idx]).Contains("POS")
                 ))
                 .ToJaggedArray();
         }
