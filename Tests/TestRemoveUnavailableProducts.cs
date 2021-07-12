@@ -15,52 +15,52 @@ namespace Tests
             "Bude k dispozici",
             "Údaj sklad 1",
         };
-        
+
         [Test]
         public void RemovesUnavailableProductsWhereWillBeAvailableEqualsZeroAndNoteContainsEnded()
         {
             var data = new[]
             {
-                new object[]{"Carlos", "0", "ukončeno"},
-                new object[]{"Tatiana", "0", ""},
-                new object[]{"Henry", "0", "ukončeno"},
-                new object[]{"Gordon", "3", "ukončeno"},
+                new object[] {"Carlos", "0", "ukončeno"},
+                new object[] {"Tatiana", "0", ""},
+                new object[] {"Henry", "0", "ukončeno"},
+                new object[] {"Gordon", "3", "ukončeno"},
             };
-            
+
             var table = new Table(Logger, Columns, "Produkt", data);
-            
+
             table.RemoveUnavailableProducts();
 
             var expected = new[]
             {
-                new object[]{"Tatiana", "0", ""},
-                new object[]{"Gordon", "3", "ukončeno"},
+                new object[] {"Tatiana", "0", ""},
+                new object[] {"Gordon", "3", "ukončeno"},
             };
-            
+
             Assert.AreEqual(expected, table.Data);
         }
-        
+
         [Test]
         public void RemovesUnavailableProductsWhereWillBeAvailableEqualsZeroAndNoteContainsClearance()
         {
             var data = new[]
             {
-                new object[]{"Carlos", "0", "doprodej"},
-                new object[]{"Tatiana", "0", ""},
-                new object[]{"Henry", "0", "doprodej"},
-                new object[]{"Gordon", "3", "doprodej"},
+                new object[] {"Carlos", "0", "doprodej"},
+                new object[] {"Tatiana", "0", ""},
+                new object[] {"Henry", "0", "doprodej"},
+                new object[] {"Gordon", "3", "doprodej"},
             };
-            
+
             var table = new Table(Logger, Columns, "Produkt", data);
-            
+
             table.RemoveUnavailableProducts();
 
             var expected = new[]
             {
-                new object[]{"Tatiana", "0", ""},
-                new object[]{"Gordon", "3", "doprodej"},
+                new object[] {"Tatiana", "0", ""},
+                new object[] {"Gordon", "3", "doprodej"},
             };
-            
+
             Assert.AreEqual(expected, table.Data);
         }
 
@@ -69,22 +69,22 @@ namespace Tests
         {
             var data = new[]
             {
-                new object[]{"Carlos", "0", "POS"},
-                new object[]{"Tatiana", "0", ""},
-                new object[]{"Henry", "0", "some note"},
-                new object[]{"Gordon", "3", "POS"},
+                new object[] {"Carlos", "0", "POS"},
+                new object[] {"Tatiana", "0", ""},
+                new object[] {"Henry", "0", "some note"},
+                new object[] {"Gordon", "3", "POS"},
             };
-            
+
             var table = new Table(Logger, Columns, "Produkt", data);
-            
+
             table.RemoveUnavailableProducts();
 
             var expected = new[]
             {
-                new object[]{"Tatiana", "0", ""},
-                new object[]{"Henry", "0", "some note"},
+                new object[] {"Tatiana", "0", ""},
+                new object[] {"Henry", "0", "some note"},
             };
-            
+
             Assert.AreEqual(expected, table.Data);
         }
     }

@@ -59,7 +59,7 @@ namespace Tests
 
             Assert.DoesNotThrow(() => table.CheckAvailableColumns());
         }
-        
+
         [Test]
         public void CheckAvailableColumnsAllowsUnknownColumns()
         {

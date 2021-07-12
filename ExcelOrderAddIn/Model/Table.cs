@@ -483,6 +483,10 @@ namespace ExcelOrderAddIn.Model
                 .ToJaggedArray();
         }
 
+        /**
+         * Selects columns that should be in the final order.
+         * Unavailable columns are skipped.
+         */
         internal void SelectColumns()
         {
             // TODO Could be configurable
