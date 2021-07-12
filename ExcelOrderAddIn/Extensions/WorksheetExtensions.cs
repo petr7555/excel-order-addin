@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ExcelOrderAddIn.Displays;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcelOrderAddIn.Extensions
 {
     public static class WorksheetExtensions
     {
+        private static readonly IDisplay Display = new Display();
+
         public static int NCols(this Excel.Worksheet worksheet)
         {
             var n = 1;
@@ -34,7 +37,7 @@ namespace ExcelOrderAddIn.Extensions
         {
             if (!worksheet.Exists())
             {
-                MessageBox.Show("The selected worksheet does not exist anymore, please refresh.", "Refresh!",
+                Display.Show("The selected worksheet does not exist anymore, please refresh.", "Refresh!",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return new List<string>();
             }

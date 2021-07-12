@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using ExcelOrderAddIn.Displays;
 using ExcelOrderAddIn.Logging;
 using NUnit.Framework;
 using ExcelOrderAddIn.Model;
@@ -9,6 +10,7 @@ namespace Tests
     public class TestCheckAvailableColumns
     {
         private static readonly ILogger Logger = new TestLogger();
+        private static readonly IDisplay Display = new TestDisplay();
 
         // Join
 
@@ -16,7 +18,6 @@ namespace Tests
         // IntExtensions
 
         // Logger -> understand it
-
         [Test]
         public void CheckAvailableColumnsThrowsWhenMandatoryColumnsAreMissing()
         {
@@ -27,7 +28,7 @@ namespace Tests
                 "Cena DMOC EUR",
                 "Údaj 1",
             };
-            var table = new Table(Logger, columns, "Produkt");
+            var table = new Table(Logger, Display, columns, "Produkt");
 
             var ex = Assert.Throws<InvalidDataException>(() => table.CheckAvailableColumns());
             Assert.AreEqual("Data do not contain the following columns: Cena, K dispozici, Výrobce, Údaj 2.",
@@ -52,7 +53,7 @@ namespace Tests
                 "Popis",
                 "DODAT",
             };
-            var table = new Table(Logger, columns, "Produkt");
+            var table = new Table(Logger, Display, columns, "Produkt");
 
             Assert.DoesNotThrow(() => table.CheckAvailableColumns());
         }
@@ -73,7 +74,7 @@ namespace Tests
                 // unknown column
                 "Unknown column",
             };
-            var table = new Table(Logger, columns, "Produkt");
+            var table = new Table(Logger, Display, columns, "Produkt");
 
             Assert.DoesNotThrow(() => table.CheckAvailableColumns());
         }

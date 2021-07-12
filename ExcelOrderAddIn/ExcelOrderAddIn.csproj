@@ -180,6 +180,8 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Displays\Display.cs" />
+    <Compile Include="Displays\IDisplay.cs" />
     <Compile Include="Exceptions\ProgrammerErrorException.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\IntExtensions.cs" />

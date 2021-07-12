@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using ExcelOrderAddIn.Displays;
 // ReSharper disable once RedundantUsingDirective
 using ExcelOrderAddIn.Extensions;
 using ExcelOrderAddIn.Logging;
@@ -18,6 +19,7 @@ namespace ExcelOrderAddIn
 
         private IEnumerable<WorksheetItem> _worksheetItems;
         private readonly ILogger _logger = new Logger(100u);
+        private static readonly IDisplay Display = new Display();
 
         public UserControl()
         {
@@ -84,9 +86,9 @@ namespace ExcelOrderAddIn
                 // Start the timer that updates logs
                 timer.Enabled = true;
 
-                var table1 = Table.FromComboBoxes(_logger, table1ComboBox, idCol1ComboBox);
-                var table2 = Table.FromComboBoxes(_logger, table2ComboBox, idCol2ComboBox);
-                var table3 = Table.FromComboBoxes(_logger, table3ComboBox, idCol3ComboBox);
+                var table1 = Table.FromComboBoxes(_logger, Display, table1ComboBox, idCol1ComboBox);
+                var table2 = Table.FromComboBoxes(_logger, Display, table2ComboBox, idCol2ComboBox);
+                var table3 = Table.FromComboBoxes(_logger, Display, table3ComboBox, idCol3ComboBox);
 
                 _logger.Info("Creating new worksheet.");
                 var newWorksheet = CreateNewWorksheet();
@@ -115,14 +117,14 @@ namespace ExcelOrderAddIn
 
                 UpdateProgress(100, "Done.");
                 var countOfRows = joined.Data.GetLength(0);
-                MessageBox.Show($"{countOfRows} row{(countOfRows == 1 ? "" : "s")} created.", "Success!",
+                Display.Show($"{countOfRows} row{(countOfRows == 1 ? "" : "s")} created.", "Success!",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
                 UpdateProgress(100, "Failed.");
-                MessageBox.Show($"Some error occurred. Details:\n{ex}", "Error!", MessageBoxButtons.OK,
+                Display.Show($"Some error occurred. Details:\n{ex}", "Error!", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
             finally
@@ -271,12 +273,12 @@ namespace ExcelOrderAddIn
 
             if (count == 0)
             {
-                MessageBox.Show($"No sheets to be deleted.", "No sheets", MessageBoxButtons.OK,
+                Display.Show("No sheets to be deleted.", "No sheets", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
                 return;
             }
 
-            if (MessageBox.Show(
+            if (Display.Show(
                 $"Do you really want to delete the following {count} sheet{(count == 1 ? "" : "s")}: {string.Join(", ", worksheets.Select(ws => ws.Name))}?",
                 "Confirm deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
@@ -284,7 +286,7 @@ namespace ExcelOrderAddIn
 
             if (count == allSheetsCount)
             {
-                MessageBox.Show($"Cannot delete all sheets.", "Invalid operation", MessageBoxButtons.OK,
+                Display.Show($"Cannot delete all sheets.", "Invalid operation", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 return;
             }
@@ -297,7 +299,7 @@ namespace ExcelOrderAddIn
 
             Globals.ThisAddIn.Application.Application.DisplayAlerts = true;
 
-            MessageBox.Show($"{count} sheet{(count == 1 ? "" : "s")} {(count == 1 ? "has" : "have")} been deleted.",
+            Display.Show($"{count} sheet{(count == 1 ? "" : "s")} {(count == 1 ? "has" : "have")} been deleted.",
                 "Success!",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);

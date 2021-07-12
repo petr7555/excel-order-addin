@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using ExcelOrderAddIn.Displays;
 using ExcelOrderAddIn.Logging;
 using NUnit.Framework;
 using ExcelOrderAddIn.Model;
@@ -9,6 +10,7 @@ namespace Tests
     public class TestInsertColumns
     {
         private static readonly ILogger Logger = new TestLogger();
+        private static readonly TestDisplay Display = new TestDisplay();
 
         [Test]
         public void InsertsColumnsIncludingWillBeAvailableColumn()
@@ -29,7 +31,7 @@ namespace Tests
                 new object[] {"Gordon", "3", "5", "3"},
             };
 
-            var table = new Table(Logger, columns, "Produkt", data);
+            var table = new Table(Logger, Display, columns, "Produkt", data);
 
             table.InsertColumns();
 
@@ -60,7 +62,7 @@ namespace Tests
             Assert.AreEqual(expectedColumns, table.Columns);
         }
 
-        private static void DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(IList<string> columns)
+        private static void DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(IList<string> columns, string missingColumnName)
         {
             var data = new[]
             {
@@ -70,7 +72,7 @@ namespace Tests
                 new object[] {"Gordon", "5", "3"},
             };
 
-            var table = new Table(Logger, columns, "Produkt", data);
+            var table = new Table(Logger, Display, columns, "Produkt", data);
 
             table.InsertColumns();
             
@@ -94,6 +96,7 @@ namespace Tests
 
             Assert.AreEqual(expectedData, table.Data);
             Assert.AreEqual(expectedColumns, table.Columns);
+            Assert.AreEqual($"Data do not contain \"{missingColumnName}\" column, \"Will be available column\" won't be added.", Display.LastDisplayedMessage);
         }
 
         [Test]
@@ -106,7 +109,7 @@ namespace Tests
                 "DODAT"
             };
 
-            DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(columns);
+            DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(columns, "Bude k dispozici");
         }
         
         [Test]
@@ -119,7 +122,7 @@ namespace Tests
                 "DODAT"
             };
 
-            DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(columns);
+            DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(columns, "OBJEDNÁNO");
         }
         
         [Test]
@@ -132,7 +135,7 @@ namespace Tests
                 "OBJEDNÁNO"
             };
 
-            DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(columns);
+            DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(columns, "DODAT");
         }
     }
 }

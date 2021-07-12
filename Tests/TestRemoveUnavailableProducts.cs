@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ExcelOrderAddIn.Displays;
 using ExcelOrderAddIn.Logging;
 using NUnit.Framework;
 using ExcelOrderAddIn.Model;
@@ -8,6 +9,7 @@ namespace Tests
     public class TestRemoveUnavailableProducts
     {
         private static readonly ILogger Logger = new TestLogger();
+        private static readonly IDisplay Display = new TestDisplay();
 
         private static readonly IList<string> Columns = new List<string>
         {
@@ -27,7 +29,7 @@ namespace Tests
                 new object[] {"Gordon", "3", "ukončeno"},
             };
 
-            var table = new Table(Logger, Columns, "Produkt", data);
+            var table = new Table(Logger, Display, Columns, "Produkt", data);
 
             table.RemoveUnavailableProducts();
 
@@ -51,7 +53,7 @@ namespace Tests
                 new object[] {"Gordon", "3", "doprodej"},
             };
 
-            var table = new Table(Logger, Columns, "Produkt", data);
+            var table = new Table(Logger, Display, Columns, "Produkt", data);
 
             table.RemoveUnavailableProducts();
 
@@ -75,7 +77,7 @@ namespace Tests
                 new object[] {"Gordon", "3", "POS"},
             };
 
-            var table = new Table(Logger, Columns, "Produkt", data);
+            var table = new Table(Logger, Display, Columns, "Produkt", data);
 
             table.RemoveUnavailableProducts();
 

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ExcelOrderAddIn.Displays;
 using ExcelOrderAddIn.Exceptions;
 using ExcelOrderAddIn.Extensions;
 using ExcelOrderAddIn.Logging;
@@ -78,9 +79,11 @@ namespace ExcelOrderAddIn.Model
          * internal and not private for tests
          */
         internal IList<string> Columns;
+
         internal object[][] Data = new object[0][];
         private readonly string _idCol;
         private readonly ILogger _logger;
+        private readonly IDisplay _display;
 
         private int NCols => Columns.Count;
 
@@ -91,9 +94,10 @@ namespace ExcelOrderAddIn.Model
         /**
          * internal and not private for tests
          */
-        internal Table(ILogger logger, IList<string> columns, string idCol)
+        internal Table(ILogger logger, IDisplay display, IList<string> columns, string idCol)
         {
             _logger = logger;
+            _display = display;
             Columns = new List<string>(columns);
             _idCol = idCol;
         }
@@ -101,7 +105,8 @@ namespace ExcelOrderAddIn.Model
         /**
          * internal and not private for tests
          */
-        internal Table(ILogger logger, IList<string> columns, string idCol, object[][] data) : this(logger, columns,
+        internal Table(ILogger logger, IDisplay display, IList<string> columns, string idCol, object[][] data) : this(
+            logger, display, columns,
             idCol)
         {
             Data = data;
@@ -133,7 +138,7 @@ namespace ExcelOrderAddIn.Model
 
             var newCols = Columns.Union(rightTable.Columns).ToList();
 
-            return new Table(_logger, newCols, _idCol, filteredData.ToJaggedArray());
+            return new Table(_logger, _display, newCols, _idCol, filteredData.ToJaggedArray());
         }
 
         internal async Task PrintToWorksheet(Excel.Worksheet worksheet, int topOffset = 0)
@@ -489,7 +494,7 @@ namespace ExcelOrderAddIn.Model
         /**
          * Selects columns that should be in the final order.
          * Unavailable columns are skipped.
-         * It also reorders the columns TODO test
+         * It also reorders the columns.
          */
         internal void SelectColumns()
         {
@@ -573,7 +578,7 @@ namespace ExcelOrderAddIn.Model
         private bool WarnIfColumnIsMissing(string columnName, string effect)
         {
             if (!ColumnIsMissing(columnName)) return false;
-            MessageBox.Show(
+            _display.Show(
                 $"Data do not contain \"{columnName}\" column, {effect}.",
                 "Missing column", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return true;
@@ -641,7 +646,8 @@ namespace ExcelOrderAddIn.Model
                 .ToJaggedArray();
         }
 
-        internal static Table FromComboBoxes(ILogger logger, ComboBox tableComboBox, ComboBox idColComboBox)
+        internal static Table FromComboBoxes(ILogger logger, IDisplay display, ComboBox tableComboBox,
+            ComboBox idColComboBox)
         {
             var worksheet = ((WorksheetItem) tableComboBox.SelectedItem).Worksheet;
             var idCol = idColComboBox.SelectedItem as string;
@@ -649,6 +655,7 @@ namespace ExcelOrderAddIn.Model
             var table = new Table
             (
                 logger,
+                display,
                 worksheet.GetColumnNames(),
                 idCol
             );

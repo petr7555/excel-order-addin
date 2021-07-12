@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using ExcelOrderAddIn.Displays;
 using ExcelOrderAddIn.Logging;
 using NUnit.Framework;
 using ExcelOrderAddIn.Model;
@@ -9,6 +10,7 @@ namespace Tests
     public class TestSelectColumns
     {
         private static readonly ILogger Logger = new TestLogger();
+        private static readonly IDisplay Display = new TestDisplay();
 
         [Test]
         public void SelectsColumns()
@@ -31,7 +33,7 @@ namespace Tests
                 new object[] {"Gordon", "3", "extra", "Squishmallows", "China", "another extra info"},
             };
 
-            var table = new Table(Logger, columns, "Product", data);
+            var table = new Table(Logger, Display, columns, "Product", data);
 
             table.SelectColumns();
 
@@ -74,7 +76,7 @@ namespace Tests
                 new object[] {"3", "Gordon", "China", "Squishmallows"},
             };
 
-            var table = new Table(Logger, columns, "Product", data);
+            var table = new Table(Logger, Display, columns, "Product", data);
 
             table.SelectColumns();
 
