@@ -10,7 +10,6 @@ namespace Tests
     {
         private static readonly ILogger Logger = new TestLogger();
 
-        // InsertColumns
         // Join
 
         // ArrayExtensions

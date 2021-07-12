@@ -11,7 +11,7 @@ namespace Tests
         private static readonly ILogger Logger = new TestLogger();
 
         [Test]
-        public void RenameColumns()
+        public void RenamesColumns()
         {
             var originalColumns = new List<string>
             {

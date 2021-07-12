@@ -11,7 +11,7 @@ namespace Tests
         private static readonly ILogger Logger = new TestLogger();
 
         [Test]
-        public void SelectColumns()
+        public void SelectsColumns()
         {
             var columns = new List<string>
             {
