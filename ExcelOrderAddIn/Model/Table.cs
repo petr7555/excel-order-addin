@@ -77,7 +77,7 @@ namespace ExcelOrderAddIn.Model
         private IList<string> _columns;
         internal object[][] Data = new object[0][];
         private readonly string _idCol;
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
         private int NCols => _columns.Count;
 
@@ -85,14 +85,18 @@ namespace ExcelOrderAddIn.Model
 
         private int IdColIdx => _columns.IndexOf(_idCol);
 
-        private Table(Logger logger, IList<string> columns, string idCol)
+        /**
+         * internal and not private for tests
+         */
+        // ReSharper disable once MemberCanBePrivate.Global
+        internal Table(ILogger logger, IList<string> columns, string idCol)
         {
             _logger = logger;
             _columns = columns;
             _idCol = idCol;
         }
 
-        private Table(Logger logger, IList<string> columns, string idCol, object[][] data) : this(logger, columns,
+        private Table(ILogger logger, IList<string> columns, string idCol, object[][] data) : this(logger, columns,
             idCol)
         {
             Data = data;
@@ -470,9 +474,9 @@ namespace ExcelOrderAddIn.Model
             Data = Data
                 .Where(row => !(
                     (Convert.ToInt32(row[budeKDispoziciIdx]) == 0 &&
-                    (Convert.ToString(row[udajSklad1Idx]).Contains("ukončeno") ||
-                     Convert.ToString(row[udajSklad1Idx]).Contains("doprodej")
-                    )) || Convert.ToString(row[udajSklad1Idx]).Contains("POS")
+                     (Convert.ToString(row[udajSklad1Idx]).Contains("ukončeno") ||
+                      Convert.ToString(row[udajSklad1Idx]).Contains("doprodej")
+                     )) || Convert.ToString(row[udajSklad1Idx]).Contains("POS")
                 ))
                 .ToJaggedArray();
         }
@@ -624,7 +628,7 @@ namespace ExcelOrderAddIn.Model
                 .ToJaggedArray();
         }
 
-        internal static Table FromComboBoxes(Logger logger, ComboBox tableComboBox, ComboBox idColComboBox)
+        internal static Table FromComboBoxes(ILogger logger, ComboBox tableComboBox, ComboBox idColComboBox)
         {
             var worksheet = ((WorksheetItem) tableComboBox.SelectedItem).Worksheet;
             var idCol = idColComboBox.SelectedItem as string;

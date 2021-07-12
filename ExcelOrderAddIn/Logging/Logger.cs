@@ -9,7 +9,7 @@ namespace ExcelOrderAddIn.Logging
     /**
      * Credits: https://stackoverflow.com/a/55540909/9290771
      */
-    public class Logger
+    public class Logger: ILogger
     {
         private readonly Queue<LogEntry> _log;
         private uint _entryNumber;
@@ -127,7 +127,7 @@ namespace ExcelOrderAddIn.Logging
                 new ColorTableItem {Index = index++, RichColor = ColorToRichColorString(_defaultColor)});
 
             foreach (var c in _log.Select(l => l.EntryColor).Distinct().Where(c => c != _defaultColor))
-                uniqueColors.Add(c, new ColorTableItem() {Index = index++, RichColor = ColorToRichColorString(c)});
+                uniqueColors.Add(c, new ColorTableItem {Index = index++, RichColor = ColorToRichColorString(c)});
 
             return uniqueColors;
         }

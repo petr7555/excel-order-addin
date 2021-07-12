@@ -184,6 +184,7 @@
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\WorksheetExtensions.cs" />
+    <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Model\Table.cs" />
     <Compile Include="Model\WorksheetItem.cs" />

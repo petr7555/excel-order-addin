@@ -17,7 +17,7 @@ namespace ExcelOrderAddIn
         private const string GeneratedSheetName = "New Order";
 
         private IEnumerable<WorksheetItem> _worksheetItems;
-        private Logger _logger = new Logger(100u);
+        private readonly ILogger _logger = new Logger(100u);
 
         public UserControl()
         {
