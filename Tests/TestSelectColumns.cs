@@ -50,7 +50,50 @@ namespace Tests
                 "Brand",
                 "Country of origin",
             };
-            
+
+            Assert.AreEqual(expectedData, table.Data);
+            Assert.AreEqual(expectedColumns, table.Columns);
+        }
+
+        [Test]
+        public void ReordersColumns()
+        {
+            var columns = new List<string>
+            {
+                "Stock coming",
+                "Product",
+                "Country of origin",
+                "Brand",
+            };
+
+            var data = new[]
+            {
+                new object[] {"20", "Carlos", "China", "Squishmallows"},
+                new object[] {"1", "Tatiana", "China", "Squishmallows"},
+                new object[] {"0", "Henry", "China", "Squishmallows"},
+                new object[] {"3", "Gordon", "China", "Squishmallows"},
+            };
+
+            var table = new Table(Logger, columns, "Product", data);
+
+            table.SelectColumns();
+
+            var expectedData = new[]
+            {
+                new object[] {"Carlos", "20", "Squishmallows", "China"},
+                new object[] {"Tatiana", "1", "Squishmallows", "China"},
+                new object[] {"Henry", "0", "Squishmallows", "China"},
+                new object[] {"Gordon", "3", "Squishmallows", "China"},
+            };
+
+            var expectedColumns = new List<string>
+            {
+                "Product",
+                "Stock coming",
+                "Brand",
+                "Country of origin",
+            };
+
             Assert.AreEqual(expectedData, table.Data);
             Assert.AreEqual(expectedColumns, table.Columns);
         }
