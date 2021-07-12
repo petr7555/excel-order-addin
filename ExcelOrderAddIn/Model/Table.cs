@@ -74,16 +74,19 @@ namespace ExcelOrderAddIn.Model
         private const string NoteForStock = "Note for stock";
         private const string Theme = "Theme";
 
-        private IList<string> _columns;
+        /**
+         * internal and not private for tests
+         */
+        internal IList<string> Columns;
         internal object[][] Data = new object[0][];
         private readonly string _idCol;
         private readonly ILogger _logger;
 
-        private int NCols => _columns.Count;
+        private int NCols => Columns.Count;
 
         private int NRows => Data.Length;
 
-        private int IdColIdx => _columns.IndexOf(_idCol);
+        private int IdColIdx => Columns.IndexOf(_idCol);
 
         /**
          * internal and not private for tests
@@ -91,7 +94,7 @@ namespace ExcelOrderAddIn.Model
         internal Table(ILogger logger, IList<string> columns, string idCol)
         {
             _logger = logger;
-            _columns = columns;
+            Columns = columns;
             _idCol = idCol;
         }
 
@@ -118,17 +121,17 @@ namespace ExcelOrderAddIn.Model
 
             // Columns in the right table that are already in the left table
             // Should be removed from the resulting table
-            var removedCols = _columns.Intersect(rightTable._columns).ToList();
+            var removedCols = Columns.Intersect(rightTable.Columns).ToList();
 
             // Indices of those columns in the original table
             // In the joined table, the index is shifted by the number of columns in the left table
-            var removedColsIndices = removedCols.Select(col => rightTable._columns.IndexOf(col) + NCols);
+            var removedColsIndices = removedCols.Select(col => rightTable.Columns.IndexOf(col) + NCols);
 
             // Remove columns from the joined table on the found indices
             var filteredData = joinedData
                 .Select(row => row.Where((value, index) => !removedColsIndices.Contains(index)));
 
-            var newCols = _columns.Union(rightTable._columns).ToList();
+            var newCols = Columns.Union(rightTable.Columns).ToList();
 
             return new Table(_logger, newCols, _idCol, filteredData.ToJaggedArray());
         }
@@ -146,7 +149,7 @@ namespace ExcelOrderAddIn.Model
                 var headerStartCell = worksheet.Cells[topOffset + 1, 1] as Excel.Range;
                 var headerEndCell = worksheet.Cells[topOffset + 1, NCols] as Excel.Range;
                 var headerRange = worksheet.Range[headerStartCell, headerEndCell];
-                headerRange.Value2 = _columns.ToExcelMultidimArray();
+                headerRange.Value2 = Columns.ToExcelMultidimArray();
                 Styling.Apply(headerRange, Styling.Style.Header);
 
                 // insert data
@@ -194,7 +197,7 @@ namespace ExcelOrderAddIn.Model
 
         private bool ColumnIsMissing(string columnName)
         {
-            return _columns.IndexOf(columnName) == -1;
+            return Columns.IndexOf(columnName) == -1;
         }
 
         private void FormatInStockColumn(Excel.Worksheet worksheet, int topOffset)
@@ -332,7 +335,7 @@ namespace ExcelOrderAddIn.Model
             };
 
             var notFoundColumns = importanceDict
-                .Where(x => _columns.IndexOf(x.Key) == -1 && x.Value == ColumnImportance.Mandatory).ToList();
+                .Where(x => Columns.IndexOf(x.Key) == -1 && x.Value == ColumnImportance.Mandatory).ToList();
             if (notFoundColumns.Count > 0)
             {
                 throw new InvalidDataException(
@@ -455,7 +458,7 @@ namespace ExcelOrderAddIn.Model
 
         private int GetColumnIndex(string columnName)
         {
-            var columnIdx = _columns.IndexOf(columnName);
+            var columnIdx = Columns.IndexOf(columnName);
             if (columnIdx == -1)
             {
                 throw new ProgrammerErrorException(
@@ -516,19 +519,22 @@ namespace ExcelOrderAddIn.Model
             };
 
             var availableResultColumns = allResultColumns
-                .Where(col => _columns.IndexOf(col) != -1)
+                .Where(col => Columns.IndexOf(col) != -1)
                 .ToList();
 
             var newOrderOfIndices = availableResultColumns
-                .Select(col => _columns.IndexOf(col));
+                .Select(col => Columns.IndexOf(col));
 
             Data = Data
                 .Select(row => newOrderOfIndices.Select(index => row[index]))
                 .ToJaggedArray();
 
-            _columns = availableResultColumns;
+            Columns = availableResultColumns;
         }
 
+        /**
+         * Renames each column if its translation exists.
+         */
         internal void RenameColumns()
         {
             // TODO Could be configurable
@@ -549,7 +555,7 @@ namespace ExcelOrderAddIn.Model
                 {ZemePuvodu, CountryOfOrigin},
             };
 
-            _columns = _columns.Select(col => translationDict.ContainsKey(col) ? translationDict[col] : col).ToList();
+            Columns = Columns.Select(col => translationDict.ContainsKey(col) ? translationDict[col] : col).ToList();
         }
 
         internal void InsertColumns()
@@ -586,7 +592,7 @@ namespace ExcelOrderAddIn.Model
             if (WarnIfColumnIsMissingWithMsg(Objednano)) return;
             if (WarnIfColumnIsMissingWithMsg(Dodat)) return;
 
-            _columns.Add(WillBeAvailable);
+            Columns.Add(WillBeAvailable);
             Data = Data
                 .Select(row => row.Append(
                     Convert.ToInt32(row[GetColumnIndex(BudeKDispozici)]) +
@@ -628,7 +634,7 @@ namespace ExcelOrderAddIn.Model
 
         private void InsertEmptyColumn(string columnName)
         {
-            _columns.Add(columnName);
+            Columns.Add(columnName);
             Data = Data
                 .Select(row => row.Append(null))
                 .ToJaggedArray();

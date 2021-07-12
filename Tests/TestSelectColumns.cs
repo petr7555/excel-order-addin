@@ -31,11 +31,11 @@ namespace Tests
                 new object[] {"Gordon", "3", "extra", "Squishmallows", "China", "another extra info"},
             };
 
-            var table = new Table(Logger, columns, "Produkt", data);
+            var table = new Table(Logger, columns, "Product", data);
 
             table.SelectColumns();
 
-            var expected = new[]
+            var expectedData = new[]
             {
                 new object[] {"Carlos", "20", "Squishmallows", "China"},
                 new object[] {"Tatiana", "1", "Squishmallows", "China"},
@@ -43,7 +43,16 @@ namespace Tests
                 new object[] {"Gordon", "3", "Squishmallows", "China"},
             };
 
-            Assert.AreEqual(expected, table.Data);
+            var expectedColumns = new List<string>
+            {
+                "Product",
+                "Stock coming",
+                "Brand",
+                "Country of origin",
+            };
+            
+            Assert.AreEqual(expectedData, table.Data);
+            Assert.AreEqual(expectedColumns, table.Columns);
         }
     }
 }
