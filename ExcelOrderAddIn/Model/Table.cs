@@ -94,7 +94,7 @@ namespace ExcelOrderAddIn.Model
         internal Table(ILogger logger, IList<string> columns, string idCol)
         {
             _logger = logger;
-            Columns = columns;
+            Columns = new List<string>(columns);
             _idCol = idCol;
         }
 
@@ -489,6 +489,7 @@ namespace ExcelOrderAddIn.Model
         /**
          * Selects columns that should be in the final order.
          * Unavailable columns are skipped.
+         * It also reorders the columns TODO test
          */
         internal void SelectColumns()
         {
