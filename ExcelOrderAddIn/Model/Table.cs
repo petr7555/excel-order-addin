@@ -88,7 +88,6 @@ namespace ExcelOrderAddIn.Model
         /**
          * internal and not private for tests
          */
-        // ReSharper disable once MemberCanBePrivate.Global
         internal Table(ILogger logger, IList<string> columns, string idCol)
         {
             _logger = logger;
@@ -96,7 +95,10 @@ namespace ExcelOrderAddIn.Model
             _idCol = idCol;
         }
 
-        private Table(ILogger logger, IList<string> columns, string idCol, object[][] data) : this(logger, columns,
+        /**
+         * internal and not private for tests
+         */
+        internal Table(ILogger logger, IList<string> columns, string idCol, object[][] data) : this(logger, columns,
             idCol)
         {
             Data = data;

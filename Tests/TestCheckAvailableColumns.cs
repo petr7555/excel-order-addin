@@ -6,21 +6,9 @@ using ExcelOrderAddIn.Model;
 
 namespace Tests
 {
-    public class Tests
+    public class TestCheckAvailableColumns
     {
         private static readonly ILogger Logger = new TestLogger();
-
-        [SetUp]
-        public void Setup()
-        {
-        }
-
-        // CheckAvailableColumns
-        // RemoveUnavailableProducts
-        // Do nabídky se nemají dostat produkty, u kterých:
-        //
-        // „Bude k dispozici = 0“ a současně je ve sloupci „Údaj Sklad 1“ poznámka „ukončeno“ nebo „doprodej“
-        // ve sloupci „Údaj Sklad 1“ je poznámka „POS“.
 
         // SelectColumns
         // RenameColumns
