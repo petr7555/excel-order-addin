@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using ExcelOrderAddIn.Displays;
 using ExcelOrderAddIn.Logging;
 using NUnit.Framework;
 using ExcelOrderAddIn.Model;
