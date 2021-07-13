@@ -9,7 +9,7 @@ namespace Tests
 {
     public class TestInsertColumns
     {
-        private static readonly ILogger Logger = new TestLogger();
+        private static readonly ILogger Logger = new LoggerForTests();
         private static readonly TestDisplay Display = new TestDisplay();
 
         [Test]
@@ -62,7 +62,8 @@ namespace Tests
             Assert.AreEqual(expectedColumns, table.Columns);
         }
 
-        private static void DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(IList<string> columns, string missingColumnName)
+        private static void DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(IList<string> columns,
+            string missingColumnName)
         {
             var data = new[]
             {
@@ -75,7 +76,7 @@ namespace Tests
             var table = new Table(Logger, Display, columns, "Produkt", data);
 
             table.InsertColumns();
-            
+
             var expectedData = new[]
             {
                 new object[] {"Carlos", "5", "3", null, null, null, null, null, null},
@@ -96,7 +97,9 @@ namespace Tests
 
             Assert.AreEqual(expectedData, table.Data);
             Assert.AreEqual(expectedColumns, table.Columns);
-            Assert.AreEqual($"Data do not contain \"{missingColumnName}\" column, \"Will be available column\" won't be added.", Display.LastDisplayedMessage);
+            Assert.AreEqual(
+                $"Data do not contain \"{missingColumnName}\" column, \"Will be available column\" won't be added.",
+                Display.LastDisplayedMessage);
         }
 
         [Test]
@@ -111,7 +114,7 @@ namespace Tests
 
             DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(columns, "Bude k dispozici");
         }
-        
+
         [Test]
         public void DoesNotInsertWillBeAvailableColumnWhenOrderedColumnIsMissing()
         {
@@ -124,7 +127,7 @@ namespace Tests
 
             DoesNotInsertWillBeAvailableColumnWhenUnderlyingColumnIsMissing(columns, "OBJEDNÁNO");
         }
-        
+
         [Test]
         public void DoesNotInsertWillBeAvailableColumnWhenDeliverColumnIsMissing()
         {

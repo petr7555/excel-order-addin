@@ -2,7 +2,7 @@ using ExcelOrderAddIn.Logging;
 
 namespace Tests.Stubs
 {
-    public class TestLogger : ILogger
+    public class LoggerForTests : ILogger
     {
         public string GetLogAsRichText(bool includeEntryNumbers)
         {

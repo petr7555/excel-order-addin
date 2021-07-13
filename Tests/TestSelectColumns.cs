@@ -9,7 +9,7 @@ namespace Tests
 {
     public class TestSelectColumns
     {
-        private static readonly ILogger Logger = new TestLogger();
+        private static readonly ILogger Logger = new LoggerForTests();
         private static readonly IDisplay Display = new TestDisplay();
 
         [Test]

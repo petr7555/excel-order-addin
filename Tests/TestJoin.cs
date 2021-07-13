@@ -9,7 +9,7 @@ namespace Tests
 {
     public class TestJoin
     {
-        private static readonly ILogger Logger = new TestLogger();
+        private static readonly ILogger Logger = new LoggerForTests();
         private static readonly IDisplay Display = new TestDisplay();
 
         [Test]
@@ -449,7 +449,7 @@ namespace Tests
             Assert.AreEqual(expectedData, joinedTable.Data);
             Assert.AreEqual(expectedColumns, joinedTable.Columns);
         }
-        
+
         [Test]
         public void JoinNoMatch()
         {
@@ -477,7 +477,7 @@ namespace Tests
                 new object[] {"Henry", "D3"},
                 new object[] {"Gordon", "D4"},
             };
-            
+
             var tableLeft = new Table(Logger, Display, columnsLeft, "A", dataLeft);
             var tableRight = new Table(Logger, Display, columnsRight, "D", dataRight);
 

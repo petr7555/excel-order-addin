@@ -9,7 +9,7 @@ namespace Tests
 {
     public class TestRemoveUnavailableProducts
     {
-        private static readonly ILogger Logger = new TestLogger();
+        private static readonly ILogger Logger = new LoggerForTests();
         private static readonly IDisplay Display = new TestDisplay();
 
         private static readonly IList<string> Columns = new List<string>

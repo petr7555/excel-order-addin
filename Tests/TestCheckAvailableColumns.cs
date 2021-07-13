@@ -10,10 +10,9 @@ namespace Tests
 {
     public class TestCheckAvailableColumns
     {
-        private static readonly ILogger Logger = new TestLogger();
+        private static readonly ILogger Logger = new LoggerForTests();
         private static readonly IDisplay Display = new TestDisplay();
 
-        // TODO Logger -> understand it
         [Test]
         public void CheckAvailableColumnsThrowsWhenMandatoryColumnsAreMissing()
         {

@@ -1,26 +1,27 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using ExcelOrderAddIn.DateTime;
 
 namespace ExcelOrderAddIn.Logging
 {
     /**
      * Credits: https://stackoverflow.com/a/55540909/9290771
      */
-    public class Logger: ILogger
+    public class Logger : ILogger
     {
         private readonly Queue<LogEntry> _log;
         private uint _entryNumber;
         private readonly uint _maxEntries;
         private readonly object _logLock = new object();
         private readonly Color _defaultColor = Color.Black;
+        private readonly IDateTime _dateTime;
 
         private class LogEntry
         {
             public uint EntryId;
-            public DateTime EntryTimeStamp;
+            public System.DateTime EntryTimeStamp;
             public string EntryText;
             public Color EntryColor;
         }
@@ -34,10 +35,18 @@ namespace ExcelOrderAddIn.Logging
         /**
          * Create an instance of the Logger class which stores maximumEntries log entries.
          */
-        public Logger(uint maximumEntries)
+        public Logger(uint maximumEntries, IDateTime dateTime)
         {
             _log = new Queue<LogEntry>();
             _maxEntries = maximumEntries;
+            _dateTime = dateTime;
+        }
+
+        /**
+         * Create an instance of the Logger class which stores maximumEntries log entries.
+         */
+        public Logger(uint maximumEntries) : this(maximumEntries, new MyDateTime())
+        {
         }
 
         /**
@@ -56,7 +65,9 @@ namespace ExcelOrderAddIn.Logging
                 foreach (var entry in _log)
                 {
                     if (includeEntryNumbers)
+                    {
                         sb.Append($"\\cf1 {entry.EntryId}. ");
+                    }
 
                     sb.Append(
                         $"\\cf1 {entry.EntryTimeStamp.ToShortDateString()} {entry.EntryTimeStamp.ToLongTimeString()}: ");
@@ -76,7 +87,7 @@ namespace ExcelOrderAddIn.Logging
         {
             AddToLog(text, _defaultColor);
         }
-        
+
         /**
          * Adds text as an ERROR log entry.
          */
@@ -99,11 +110,13 @@ namespace ExcelOrderAddIn.Logging
 
                 _entryNumber++;
                 var logEntry = new LogEntry
-                    {EntryId = _entryNumber, EntryTimeStamp = DateTime.Now, EntryText = text, EntryColor = entryColor};
+                    {EntryId = _entryNumber, EntryTimeStamp = _dateTime.Now, EntryText = text, EntryColor = entryColor};
                 _log.Enqueue(logEntry);
 
-                while (_log.Count > _maxEntries)
+                if (_log.Count > _maxEntries)
+                {
                     _log.Dequeue();
+                }
             }
         }
 

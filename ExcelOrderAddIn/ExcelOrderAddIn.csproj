@@ -180,16 +180,18 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="Displays\Display.cs" />
-    <Compile Include="Displays\IDisplay.cs" />
-    <Compile Include="Exceptions\ProgrammerErrorException.cs" />
-    <Compile Include="Extensions\ArrayExtensions.cs" />
-    <Compile Include="Extensions\IntExtensions.cs" />
-    <Compile Include="Extensions\WorksheetExtensions.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Model\Table.cs" />
-    <Compile Include="Model\WorksheetItem.cs" />
+    <Compile Include="DateTime\MyDateTime.cs"/>
+    <Compile Include="DateTime\IDateTime.cs"/>
+    <Compile Include="Displays\Display.cs"/>
+    <Compile Include="Displays\IDisplay.cs"/>
+    <Compile Include="Exceptions\ProgrammerErrorException.cs"/>
+    <Compile Include="Extensions\ArrayExtensions.cs"/>
+    <Compile Include="Extensions\IntExtensions.cs"/>
+    <Compile Include="Extensions\WorksheetExtensions.cs"/>
+    <Compile Include="Logging\ILogger.cs"/>
+    <Compile Include="Logging\Logger.cs"/>
+    <Compile Include="Model\Table.cs"/>
+    <Compile Include="Model\WorksheetItem.cs"/>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
