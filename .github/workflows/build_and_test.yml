@@ -56,5 +56,5 @@ jobs:
       run: |
         $nunit_console = "${env:userprofile}" + "\.nuget\packages\nunit.consolerunner\3.12.0\tools\"
         $env:path = $env:path + ";$nunit_console"
-        echo $path
+        echo $env:path
         nunit3-console.exe .\Tests\bin\Debug\net48\Tests.dll
