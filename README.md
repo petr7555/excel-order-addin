@@ -1,4 +1,4 @@
-[![CI](https://github.com/petr7555/excell-order-addin/actions/workflows/build.yml/badge.svg)](https://github.com/petr7555/excell-order-addin/actions/workflows/build.yml)
+[![CI](https://github.com/petr7555/excell-order-addin/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/petr7555/excell-order-addin/actions/workflows/build_and_test.yml)
 
 # Excel order Add-In
 Generates an order table from tables exported from Altus Vario.
