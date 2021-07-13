@@ -8,7 +8,7 @@ namespace Tests
         [Test]
         public void OneCharacter()
         {
-            Assert.AreEqual("A", 1.ToLetter());
+            Assert.AreEqual("AA", 1.ToLetter());
             Assert.AreEqual("E", 5.ToLetter());
             Assert.AreEqual("Z", 26.ToLetter());
         }
@@ -30,7 +30,7 @@ namespace Tests
             Assert.AreEqual("BAA", (703 + 26 * 26).ToLetter());
             Assert.AreEqual("DAA", (703 + 3 * 26 * 26).ToLetter());
         }
-        
+
         [Test]
         public void LessThanOneAreEqualToEmptyString()
         {
