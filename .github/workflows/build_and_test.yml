@@ -61,4 +61,6 @@ jobs:
         dir
         cd .\bin
         dir
-        nunit3-console.exe .\Tests\bin\Debug\net48\Tests.dll
+        cd .\Release
+        dir
+        nunit3-console.exe .\Tests\bin\Release\net48\Tests.dll
