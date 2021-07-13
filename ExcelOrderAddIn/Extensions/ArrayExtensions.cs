@@ -5,22 +5,6 @@ namespace ExcelOrderAddIn.Extensions
 {
     public static class ArrayExtensions
     {
-        private static IEnumerable<T> GetColumn<T>(this T[,] array, int column)
-        {
-            for (var i = 0; i < array.GetLength(0); i++)
-            {
-                yield return array[i, column];
-            }
-        }
-
-        public static IEnumerable<IEnumerable<T>> GetColumns<T>(this T[,] array)
-        {
-            for (var i = 0; i < array.GetLength(1); i++)
-            {
-                yield return array.GetColumn(i);
-            }
-        }
-
         /**
          * Excel arrays start at 1.
          * Convert into normal matrix starting at 0.
