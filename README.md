@@ -1,4 +1,4 @@
-[![.NET](https://github.com/petr7555/excell-order-addin/actions/workflows/dotnet.yml/badge.svg)](https://github.com/petr7555/excell-order-addin/actions/workflows/dotnet.yml)
+[![CI](https://github.com/petr7555/excell-order-addin/actions/workflows/build.yml/badge.svg)](https://github.com/petr7555/excell-order-addin/actions/workflows/build.yml)
 
 # Excel order Add-In
 Generates an order table from tables exported from Altus Vario.

@@ -1,0 +1,60 @@
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request 
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  # This workflow contains a single job called "Build"
+  Build:
+    runs-on: [windows-latest]
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+      
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+
+    # Install dependecies
+    - name: Restore NuGet packages
+      run: nuget restore ExcelOrderAddIn.sln
+
+    
+    # Signing
+    # Generate a signing certificate in the Windows Application
+    # Packaging Project or add an existing signing certificate to the project.
+    # Next, use PowerShell to encode the .pfx file using Base64 encoding
+    # by running the following Powershell script to generate the output string:
+    #
+    # $pfx_cert = Get-Content .\ExcelOrderAddIn\PetrJanikExcelOrderAddIn.pfx -Encoding Byte
+    # [System.Convert]::ToBase64String($pfx_cert) | Out-File 'SigningCertificate_Encoded.txt'
+    #
+    # Open the output file, SigningCertificate_Encoded.txt, and copy the
+    # string inside. Then, add the string to the repo as a GitHub secret
+    # and name it "BASE64_ENCODED_PFX"
+    # For more information on how to configure your signing certificate for
+    # this workflow, refer to https://github.com/microsoft/github-actions-for-desktop-apps#signing
+    
+    # Decode the base 64 encoded pfx
+    - name: Decode the pfx
+      run: |
+        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
+        [IO.File]::WriteAllBytes(".\ExcelOrderAddIn\PetrJanikExcelOrderAddIn.pfx", $pfx_cert_byte)
+        
+    - name: Build the Solution
+      run: msbuild ExcelOrderAddIn.sln /p:Configuration=Release
+      
+    - name: Run tests
+      run: |
+        $nunit_console = "${env:userprofile}" + "\.nuget\packages\nunit.consolerunner\3.12.0\tools\"
+        $env:path = $env:path + ";$nunit_console"
+        echo $env:path
+        nunit3-console.exe .\Tests\bin\Debug\net48\Tests.dll
