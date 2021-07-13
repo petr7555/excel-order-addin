@@ -1,7 +1,7 @@
 using System.Windows.Forms;
 using ExcelOrderAddIn.Displays;
 
-namespace Tests
+namespace Tests.Stubs
 {
     public class TestDisplay : IDisplay
     {

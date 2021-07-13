@@ -4,6 +4,7 @@ using ExcelOrderAddIn.Displays;
 using ExcelOrderAddIn.Logging;
 using NUnit.Framework;
 using ExcelOrderAddIn.Model;
+using Tests.Stubs;
 
 namespace Tests
 {

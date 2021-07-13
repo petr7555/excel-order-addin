@@ -1,6 +1,6 @@
 using ExcelOrderAddIn.Logging;
 
-namespace Tests
+namespace Tests.Stubs
 {
     public class TestLogger : ILogger
     {
