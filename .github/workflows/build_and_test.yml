@@ -27,7 +27,23 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore ExcelOrderAddIn.sln
 
-    # Decode the base 64 encoded pfx and save the Signing_Certificate
+    
+    # Signing
+    # Generate a signing certificate in the Windows Application
+    # Packaging Project or add an existing signing certificate to the project.
+    # Next, use PowerShell to encode the .pfx file using Base64 encoding
+    # by running the following Powershell script to generate the output string:
+    #
+    # $pfx_cert = Get-Content .\ExcelOrderAddIn\PetrJanikExcelOrderAddIn.pfx -Encoding Byte
+    # [System.Convert]::ToBase64String($pfx_cert) | Out-File 'SigningCertificate_Encoded.txt'
+    #
+    # Open the output file, SigningCertificate_Encoded.txt, and copy the
+    # string inside. Then, add the string to the repo as a GitHub secret
+    # and name it "BASE64_ENCODED_PFX"
+    # For more information on how to configure your signing certificate for
+    # this workflow, refer to https://github.com/microsoft/github-actions-for-desktop-apps#signing
+    
+    # Decode the base 64 encoded pfx
     - name: Decode the pfx
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
