@@ -13,8 +13,6 @@ namespace Tests
         private static readonly ILogger Logger = new TestLogger();
         private static readonly IDisplay Display = new TestDisplay();
 
-        // TODO test ArrayExtensions
-
         // TODO Logger -> understand it
         [Test]
         public void CheckAvailableColumnsThrowsWhenMandatoryColumnsAreMissing()
