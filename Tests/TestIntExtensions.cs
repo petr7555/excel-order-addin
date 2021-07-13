@@ -8,7 +8,7 @@ namespace Tests
         [Test]
         public void OneCharacter()
         {
-            Assert.AreEqual("AA", 1.ToLetter());
+            Assert.AreEqual("A", 1.ToLetter());
             Assert.AreEqual("E", 5.ToLetter());
             Assert.AreEqual("Z", 26.ToLetter());
         }
