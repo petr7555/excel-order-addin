@@ -14,7 +14,6 @@ namespace Tests
         private static readonly IDisplay Display = new TestDisplay();
 
         // TODO test ArrayExtensions
-        // TODO test  IntExtensions
 
         // TODO Logger -> understand it
         [Test]
