@@ -27,5 +27,11 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore ExcelOrderAddIn.sln
 
+    # Decode the base 64 encoded pfx and save the Signing_Certificate
+    - name: Decode the pfx
+      run: |
+        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
+        [IO.File]::WriteAllBytes(".\ExcelOrderAddIn\PetrJanikExcelOrderAddIn.pfx", $pfx_cert_byte)
+        
     - name: Build the Solution
       run: msbuild ExcelOrderAddIn.sln /p:Configuration=Release
